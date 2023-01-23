@@ -1,8 +1,9 @@
-module multiplexer(mux_r0, mux_r1, mux_r2, mux_r3, 
-mux_r4, mux_r5, mux_r6, mux_r7, mux_r8, mux_r9, 
-mux_r10, mux_r11, mux_r12, mux_r13, mux_r14, mux_r15,
-mux_hi, mux_lo, mux_zhi, mux_zlo, mux_pc, mux_MDR, mux_inPort,
-);
+module multiplexer(muxIN_r0, muxIN_r1, muxIN_r2, muxIN_r3, 
+muxIN_r4, muxIN_r5, muxIN_r6, muxIN_r7, muxIN_r8, muxIN_r9, 
+muxIN_r10, muxIN_r11, muxIN_r12, muxIN_r13, muxIN_r14, muxIN_r15,
+muxIN_HI, muxIN_LO, muxIN_Z_HI, muxIN_Z_LO, muxIN_PC, muxIN_MDR, 
+muxIN_inPort, C_sign_extended);
+    
     input [31:0] D;
     input clk, clr, enable;
     output reg [31:0] Q;
