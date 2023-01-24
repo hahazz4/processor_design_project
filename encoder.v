@@ -1,50 +1,50 @@
 /* Representation of an encoder in Verilog HDL. */
 /* Declared 32, 1-bit inputs and 5 output select signals. */
 /* Data type of each input/output is a wire. */
-module encoder (input encode_IN_r0, input encode_IN_r1, input encode_IN_r2, 
-input encode_IN_r3, input encode_IN_r4, input encode_IN_r5, input encode_IN_r6, 
-input encode_IN_r7, input encode_IN_r8, input encode_IN_r9, input encode_IN_r10, 
-input encode_IN_r11, input encode_IN_r12, input encode_IN_r13, input encode_IN_r14, 
-input encode_IN_r15, input encode_IN_HI, input encode_IN_LO, input encode_IN_Z_HI, 
-input encode_IN_Z_LO, input encode_IN_PC, input encode_IN_MDR, input encode_IN_inPort, 
-input encode_IN_Cout, input encode_IN_24, input encode_IN_25, input encode_IN_26, 
-input encode_IN_27, input encode_IN_28, input encode_IN_29, input encode_IN_30, 
-input encode_IN_31, output [4:0] select_signals);
+module encoder (input encodeIN_r0, input encodeIN_r1, input encodeIN_r2, 
+input encodeIN_r3, input encodeIN_r4, input encodeIN_r5, input encodeIN_r6, 
+input encodeIN_r7, input encodeIN_r8, input encodeIN_r9, input encodeIN_r10, 
+input encodeIN_r11, input encodeIN_r12, input encodeIN_r13, input encodeIN_r14, 
+input encodeIN_r15, input encodeIN_HI, input encodeIN_LO, input encodeIN_Z_HI, 
+input encodeIN_Z_LO, input encodeIN_PC, input encodeIN_MDR, input encodeIN_inPort, 
+input encodeIN_Cout, input encodeIN_24, input encodeIN_25, input encodeIN_26, 
+input encodeIN_27, input encodeIN_28, input encodeIN_29, input encodeIN_30, 
+input encodeIN_31, output [4:0] select_signals_OUT);
 
-    /* While loop to update the select_signals output wire. */
+    /* While loop to update the select_signals_OUT output wire. */
     always @* begin
-        if (encode_IN_31) select_signals = 5'b11111;
-        else if (encode_IN_30) select_signals = 5'b11110;
-        else if (encode_IN_29) select_signals = 5'b11101;
-        else if (encode_IN_28) select_signals = 5'b11100;
-        else if (encode_IN_27) select_signals = 5'b11011;
-        else if (encode_IN_26) select_signals = 5'b11010;
-        else if (encode_IN_25) select_signals = 5'b11001;
-        else if (encode_IN_24) select_signals = 5'b11000;
-        else if (encode_IN_Cout) select_signals = 5'b10111;
-        else if (encode_IN_inPort) select_signals = 5'b10110;
-        else if (encode_IN_MDR) select_signals = 5'b10101;
-        else if (encode_IN_PC) select_signals = 5'b10100;
-        else if (encode_IN_Z_LO) select_signals = 5'b10011;
-        else if (encode_IN_Z_HI) select_signals = 5'b10010;
-        else if (encode_IN_LO) select_signals = 5'b10001;
-        else if (encode_IN_HI) select_signals = 5'b10000;
-        else if (encode_IN_r15) select_signals = 5'b01111;
-        else if (encode_IN_r14) select_signals = 5'b01110;
-        else if (encode_IN_r13) select_signals = 5'b01101;
-        else if (encode_IN_r12) select_signals = 5'b01100;
-        else if (encode_IN_r11) select_signals = 5'b01011;
-        else if (encode_IN_r10) select_signals = 5'b01010;
-        else if (encode_IN_r9) select_signals = 5'b01001;
-        else if (encode_IN_r8) select_signals = 5'b01000;
-        else if (encode_IN_r7) select_signals = 5'b00111;
-        else if (encode_IN_r6) select_signals = 5'b00110;
-        else if (encode_IN_r5) select_signals = 5'b00101;
-        else if (encode_IN_r4) select_signals = 5'b00100;
-        else if (encode_IN_r3) select_signals = 5'b00011;
-        else if (encode_IN_r2) select_signals = 5'b00010;
-        else if (encode_IN_r1) select_signals = 5'b00001;
-        else if (encode_IN_r0) select_signals = 5'b00000;
-        else select_signals = 5'b00000;  // optional, to avoid latch.
+        if (encodeIN_31) select_signals_OUT <= 5'b11111;
+        else if (encodeIN_30) select_signals_OUT <= 5'b11110;
+        else if (encodeIN_29) select_signals_OUT <= 5'b11101;
+        else if (encodeIN_28) select_signals_OUT <= 5'b11100;
+        else if (encodeIN_27) select_signals_OUT <= 5'b11011;
+        else if (encodeIN_26) select_signals_OUT <= 5'b11010;
+        else if (encodeIN_25) select_signals_OUT <= 5'b11001;
+        else if (encodeIN_24) select_signals_OUT <= 5'b11000;
+        else if (encodeIN_Cout) select_signals_OUT <= 5'b10111;
+        else if (encodeIN_inPort) select_signals_OUT <= 5'b10110;
+        else if (encodeIN_MDR) select_signals_OUT <= 5'b10101;
+        else if (encodeIN_PC) select_signals_OUT <= 5'b10100;
+        else if (encodeIN_Z_LO) select_signals_OUT <= 5'b10011;
+        else if (encodeIN_Z_HI) select_signals_OUT <= 5'b10010;
+        else if (encodeIN_LO) select_signals_OUT <= 5'b10001;
+        else if (encodeIN_HI) select_signals_OUT <= 5'b10000;
+        else if (encodeIN_r15) select_signals_OUT <= 5'b01111;
+        else if (encodeIN_r14) select_signals_OUT <= 5'b01110;
+        else if (encodeIN_r13) select_signals_OUT <= 5'b01101;
+        else if (encodeIN_r12) select_signals_OUT <= 5'b01100;
+        else if (encodeIN_r11) select_signals_OUT <= 5'b01011;
+        else if (encodeIN_r10) select_signals_OUT <= 5'b01010;
+        else if (encodeIN_r9) select_signals_OUT <= 5'b01001;
+        else if (encodeIN_r8) select_signals_OUT <= 5'b01000;
+        else if (encodeIN_r7) select_signals_OUT <= 5'b00111;
+        else if (encodeIN_r6) select_signals_OUT <= 5'b00110;
+        else if (encodeIN_r5) select_signals_OUT <= 5'b00101;
+        else if (encodeIN_r4) select_signals_OUT <= 5'b00100;
+        else if (encodeIN_r3) select_signals_OUT <= 5'b00011;
+        else if (encodeIN_r2) select_signals_OUT <= 5'b00010;
+        else if (encodeIN_r1) select_signals_OUT <= 5'b00001;
+        else if (encodeIN_r0) select_signals_OUT <= 5'b00000;
+        else select_signals_OUT <= 5'b00000;  // optional, to avoid latch.
     end
 endmodule // Encoder end.
