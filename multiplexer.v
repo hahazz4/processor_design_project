@@ -1,18 +1,18 @@
 /* Representation of a multiplexer in Verilog HDL */
 /* Declared 32, 32-bit inputs, 5 select signals, and  1, 32-bit output */
-/* Data type of each input/select signal is a wire and output is a reg */
+/* Data type of each input/select signal is a and output is a reg */
 
-module multiplexer(input wire [4:0] select_signals, input wire [31:0] muxIN_r0; 
-input wire [31:0] muxIN_r1; input wire [31:0] muxIN_r2; input wire [31:0] muxIN_r3; 
-input wire [31:0] muxIN_r4; input wire [31:0] muxIN_r5; input wire [31:0] muxIN_r6; 
-input wire [31:0] muxIN_r7; input wire [31:0] muxIN_r8; input wire [31:0] muxIN_r9; 
-input wire [31:0] muxIN_r10; input wire [31:0] muxIN_r11; input wire [31:0] muxIN_r12; 
-input wire [31:0] muxIN_r13; input wire [31:0] muxIN_r14; input wire [31:0] muxIN_r15; 
-input wire [31:0] muxIN_HI; input wire [31:0] muxIN_LO; input wire [31:0] muxIN_Z_HI;
-input wire [31:0] muxIN_Z_LO; input wire [31:0] muxIN_PC; input wire [31:0] muxIN_MDR; 
-input wire [31:0] muxIN_inPort; input wire [31:0] C_sign_extended; input wire [31:0] in_24;
-input wire [31:0] in_25; input wire [31:0] in_26; input wire [31:0] in_27; input wire [31:0] in_28; 
-input wire [31:0] in_29; input wire [31:0] in_30; input wire [31:0] in_31; output reg [31:0] muxOut;);
+module multiplexer(input [4:0] select_signals, input [31:0] muxIN_r0, 
+input [31:0] muxIN_r1, input [31:0] muxIN_r2, input [31:0] muxIN_r3, 
+input [31:0] muxIN_r4, input [31:0] muxIN_r5, input [31:0] muxIN_r6, 
+input [31:0] muxIN_r7, input [31:0] muxIN_r8, input [31:0] muxIN_r9, 
+input [31:0] muxIN_r10, input [31:0] muxIN_r11, input [31:0] muxIN_r12, 
+input [31:0] muxIN_r13, input [31:0] muxIN_r14, input [31:0] muxIN_r15, 
+input [31:0] muxIN_HI, input [31:0] muxIN_LO, input [31:0] muxIN_Z_HI,
+input [31:0] muxIN_Z_LO, input [31:0] muxIN_PC, input [31:0] muxIN_MDR, 
+input [31:0] muxIN_inPort, input [31:0] C_sign_extended, input [31:0] in_24,
+input [31:0] in_25, input [31:0] in_26, input [31:0] in_27, input [31:0] in_28, 
+input [31:0] in_29, input [31:0] in_30, input [31:0] in_31, output reg [31:0] muxOut);
 
 always @* begin
         case (select_signals)
