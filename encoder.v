@@ -1,3 +1,6 @@
+/* Representation of an encoder in Verilog HDL. */
+/* Declared 32, 1-bit inputs and 5 output select signals. */
+/* Data type of each input/output is a wire. */
 module encoder (input encode_IN_r0, input encode_IN_r1, input encode_IN_r2, 
 input encode_IN_r3, input encode_IN_r4, input encode_IN_r5, input encode_IN_r6, 
 input encode_IN_r7, input encode_IN_r8, input encode_IN_r9, input encode_IN_r10, 
@@ -8,6 +11,7 @@ input encode_IN_Cout, input encode_IN_24, input encode_IN_25, input encode_IN_26
 input encode_IN_27, input encode_IN_28, input encode_IN_29, input encode_IN_30, 
 input encode_IN_31, output [4:0] select_signals);
 
+    /* While loop to update the select_signals output wire. */
     always @* begin
         if (encode_IN_31) select_signals = 5'b11111;
         else if (encode_IN_30) select_signals = 5'b11110;
@@ -41,6 +45,6 @@ input encode_IN_31, output [4:0] select_signals);
         else if (encode_IN_r2) select_signals = 5'b00010;
         else if (encode_IN_r1) select_signals = 5'b00001;
         else if (encode_IN_r0) select_signals = 5'b00000;
-        else select_signals = 5'b00000;  // optional, to avoid latch
+        else select_signals = 5'b00000;  // optional, to avoid latch.
     end
-endmodule
+endmodule // Encoder end.

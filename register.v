@@ -1,13 +1,17 @@
-module Register(clk, clr, enable, D, Q);
-    input [31:0] D;
-    input clk, clr, enable;
-    output reg [31:0] Q;
+/* Representation of a register in Verilog HDL. */
+/* Declared 3, 1-bit signals, 1, 32-bit D-input, and 1, 32-bit Q-output. */
+/* Data type of each signal/input is a wire and output is a reg. */
+module Register(input clk, input clr, input enable, input [31:0] D, output reg [31:0] Q);
 
-    always @(posedge clk) //posedge -> positive edge trigger, negedge -> negative edge trigger
+    /* While loop that iterates every positive clock edge. */
+    always @(posedge clk)
+        
+        /* If clear signal is high, set Q output to 0. */
         if(clr)
             Q <= 0;
 
+        /* If enable signal is high, set Q output to follow (or equal to) D input. */
         else if(enable)
-            Q = D; //Data stored in Q, if the enable is 1.
+            Q = D;
             
-endmodule //Register end.
+endmodule // Register end.

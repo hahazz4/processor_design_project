@@ -1,6 +1,6 @@
-/* Representation of a multiplexer in Verilog HDL */
-/* Declared 32, 32-bit inputs, 5 select signals, and  1, 32-bit output */
-/* Data type of each input/select signal is a and output is a reg */
+/* Representation of a multiplexer in Verilog HDL. */
+/* Declared 32, 32-bit inputs, 5 select signals, and  1, 32-bit output. */
+/* Data type of each input/select signal is a wire and output is a reg. */
 
 module multiplexer(input [4:0] select_signals, input [31:0] muxIN_r0, 
 input [31:0] muxIN_r1, input [31:0] muxIN_r2, input [31:0] muxIN_r3, 
