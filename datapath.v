@@ -14,6 +14,10 @@ input [31:0] muxIN_29, input [31:0] muxIN_30, input [31:0] muxIN_31, output reg 
 
     wire [4:0] select_signals_OUT;
 
+    //register regis()
+    //eventually we can do this instead of the large input list at the top
+    //creates an instance of the register module
+
     encoder ecode(encodeIN_r0, encodeIN_r1, encodeIN_r2, 
     encodeIN_r3, encodeIN_r4, encodeIN_r5, encodeIN_r6, 
     encodeIN_r7, encodeIN_r8, encodeIN_r9, encodeIN_r10, 

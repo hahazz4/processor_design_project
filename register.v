@@ -4,7 +4,8 @@
 module register(input clk, input clr, input enable, input [31:0] D, output reg [31:0] Q);
 
     /* While loop that iterates every positive clock edge. */
-    always @(posedge clk)
+    always @(posedge clk) 
+    begin
         
         /* If clear signal is high, set Q output to 0. */
         if(clr)
@@ -12,6 +13,6 @@ module register(input clk, input clr, input enable, input [31:0] D, output reg [
 
         /* If enable signal is high, set Q output to follow (or equal to) D input. */
         else if(enable)
-            Q = D;
-            
+            Q = D;        
+    end
 endmodule // Register end.

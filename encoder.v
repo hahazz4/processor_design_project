@@ -1,7 +1,7 @@
 /* Representation of an encoder in Verilog HDL. */
 /* Declared 32, 1-bit inputs and 5 output select signals. */
 /* Data type of each input/output is a wire. */
-module encoder (input encodeIN_r0, input encodeIN_r1, input encodeIN_r2, 
+module encoder(input encodeIN_r0, input encodeIN_r1, input encodeIN_r2, 
 input encodeIN_r3, input encodeIN_r4, input encodeIN_r5, input encodeIN_r6, 
 input encodeIN_r7, input encodeIN_r8, input encodeIN_r9, input encodeIN_r10, 
 input encodeIN_r11, input encodeIN_r12, input encodeIN_r13, input encodeIN_r14, 
