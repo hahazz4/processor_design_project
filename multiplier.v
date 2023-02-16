@@ -1,4 +1,5 @@
 //Start of code
+//Modified 32x32 Booth's Algorithm
 module multiplier(input reg [31:0] a, b, 
                   input start, clk, reset,
                   output [61:0] mul_result, ans,
