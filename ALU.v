@@ -12,7 +12,7 @@ module ALU(input [31:0] A, B,
    // Addition and subtraction
    wire [31:0] add_result, sub_result;
    adder add_unit(.a(A), .b(B), .sum(add_result), .carry_out(carry_out));
-   sub_unit(.a(A), .b(B), .diff(sub_result), .carry_out(carry_out));
+   subtractor sub_unit(.a(A), .b(B), .diff(sub_result), .carry_out(carry_out));
    
    // Multiplication
    wire [63:0] mul_result;

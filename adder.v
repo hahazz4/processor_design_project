@@ -2,7 +2,7 @@
 //32-bit Ripple Carry Adder
 module carryRippleAdder32(input [31:0] a, b,
                           input c_in,
-                          output [31:0] s,
+                          output [31:0] sum,
                           output co);
     wire c_in28, c_in32;
     carryRippleAdder16 m1(c_in28, sum[15:0], a[15:0], b[15:0], c_in16);
@@ -11,7 +11,7 @@ endmodule
 
 module carryRippleAdder16(input [15:0] a, b,
                           input c_in,
-                          output [15:0] s,
+                          output [15:0] sum,
                           output co);
     wire c_in4, c_in8, c_in12;
     carryRippleAdder4 m1(c_in14, sum[3:0], a[3:0], b[3:0], c_in);
@@ -22,7 +22,7 @@ endmodule
 
 module carryRippleAdder4(input [3:0] a, b,
                          input c_in,
-                         output [3:0] s,
+                         output [3:0] sum,
                          output co);
 
     wire c_in2, c_in3, c_in4;
