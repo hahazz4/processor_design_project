@@ -5,6 +5,8 @@ module shift_left_or_right(input [31:0] A
 always(posedge clk or negedge reset_n)
     begin
         if(!reset_n)
-            q <=        
+            q <= 32'b0;
+        else if (l_enable == 1'b0)
+                   
     end
 endmodule
