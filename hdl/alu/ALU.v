@@ -27,8 +27,8 @@ module ALU(input [31:0] A, B,
    // wire [31:0] rotate_left_result, rotate_right_result;
    // alu_shift shift_unit(.a(A), .result(shift_result), .dir(1'b0));
    // alu_shift shift_unit(.a(A), .result(shift_result), .dir(1'b1));
-   // rotate_unit(.a(A), .result(rotate_left_result), .dir(1'b0));
-   // rotate_unit(.a(A), .result(rotate_right_result), .dir(1'b1));
+   // alu_rotate rotate_unit(.a(A), .result(rotate_left_result), .dir(1'b0));
+   // alu_rotate rotate_unit(.a(A), .result(rotate_right_result), .dir(1'b1));
    
    // Select operation
    always @(*) begin
