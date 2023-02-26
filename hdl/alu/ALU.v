@@ -11,24 +11,25 @@ module ALU(input [31:0] A, B,
    
    // Addition and subtraction
    wire [31:0] add_result, sub_result;
-   adder add_unit(.a(A), .b(B), .sum(add_result), .carry_out(carry_out));              //gonna test soon
-   // subtractor sub_unit(.a(A), .b(B), .diff(sub_result), .carry_out(carry_out));
+   alu_adder add_unit(.a(A), .b(B), .sum(add_result), .carry_out(carry_out));
+   // alu_subtractor sub_unit(.a(A), .b(B), .diff(sub_result), .carry_out(carry_out));
    
    // // Multiplication
    // wire [63:0] mul_result;
-   // multiplier mul_unit(.a(A), .b(B), .product(mul_result));
+   // alu_multiplier mul_unit(.a(A), .b(B), .product(mul_result));
    
    // // Division
    // wire [31:0] div_result, rem_result;
-   // divider div_unit(.a(A), .b(B), .quotient(div_result), .remainder(rem_result));
+   // alu_divider div_unit(.a(A), .b(B), .quotient(div_result), .remainder(rem_result));
    
    // // Shift and rotate operations
-   // wire [31:0] shift_left_result, shift_right_result;
-   // wire [31:0] rotate_left_result, rotate_right_result;
-   // alu_shift shift_unit(.a(A), .result(shift_result), .dir(1'b0));
-   // alu_shift shift_unit(.a(A), .result(shift_result), .dir(1'b1));
-   // alu_rotate rotate_unit(.a(A), .result(rotate_left_result), .dir(1'b0));
-   // alu_rotate rotate_unit(.a(A), .result(rotate_right_result), .dir(1'b1));
+   // wire [31:0] shiftL_result, shiftR_result, shiftAR_result;
+   // wire [31:0] rotateL_result, rotateR_result;
+   // alu_shiftL shift_unit(.a(A), .result(shiftL_result), .dir(1'b0));
+   // alu_shiftR shift_unit(.a(A), .result(shiftR_result), .dir(1'b1));
+   // alu_shiftAR shift_unit(.a(A), .result(shiftAR_result), .dir(1'b1));
+   // alu_rotateL rotate_unit(.a(A), .result(rotateL_result), .dir(1'b0));
+   // alu_rotateR rotate_unit(.a(A), .result(rotateR_result), .dir(1'b1));
    
    // Select operation
    always @(*) begin
@@ -36,15 +37,16 @@ module ALU(input [31:0] A, B,
          4'b0000: result = and_result;
          4'b0001: result = or_result;
          4'b0010: result = xor_result;
-         4'b0011: result = add_result;
-         // 4'b0100: result = sub_result;
-         // 4'b0101: result = mul_result;
-         // 4'b0110: result = div_result;
-         // 4'b0111: result = rem_result;
-         // 4'b1000: result = shift_left_result;
-         // 4'b1001: result = shift_right_result;
-         // 4'b1010: result = rotate_left_result;
-         // 4'b1011: result = rotate_right_result;
+         //4'b0011: result = add_result;
+         //4'b0100: result = sub_result;
+         //4'b0101: result = mul_result;
+         //4'b0110: result = div_result;
+         //4'b0111: result = rem_result;
+         //4'b1000: result = shiftL_result;
+         //4'b1001: result = shiftR_result;
+         //4'b1010: result = shiftAR_result;
+         //4'b1011: result = rotateL_result;
+         //4'b1100: result = rotateR_result;
          default: result = 32'b0;
       endcase
    end
