@@ -40,7 +40,7 @@ input [31:0] muxIN_29, input [31:0] muxIN_30, input [31:0] muxIN_31, output reg 
                 5'b10100: muxOut <= muxIN_PC;
                 5'b10101: muxOut <= muxIN_MDR;
                 5'b10110: muxOut <= muxIN_inPort;
-                5'b10111: muxOut <= muxIN_C_sign_ext;
+                5'b10111: muxOut <= muxINmux_C_sign_ext;
                 5'b11000: muxOut <= muxIN_24;
                 5'b11001: muxOut <= muxIN_25;
                 5'b11010: muxOut <= muxIN_26;
