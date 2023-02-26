@@ -1,6 +1,7 @@
 module ALU(input [31:0] a, b, num, 
            input wire [4:0] opcode, 
 			  output reg[31:0] result,
+			  output reg[31:0] remainder,
            output reg[31:0] carry_out);
            //output overflow);
    
@@ -20,9 +21,9 @@ module ALU(input [31:0] a, b, num,
 //   wire [63:0] mul_result;
 //   multiplier mul_unit(.a(A), .b(B), .mul_result(mul_result));
 //   
-//   // Division
-//   wire [31:0] div_result, rem_result;
-//   divider div_unit(.a(A), .b(B), .div_result(div_result), .rem_result(rem_result));
+   // Division
+   wire [31:0] div_result, rem_result;
+   divider div_unit(a, b, div_result, rem_result);
 //   
    // Shift and rotate operations
    wire [31:0] shiftL_result, shiftR_result, shiftAR_result;
@@ -31,7 +32,7 @@ module ALU(input [31:0] a, b, num,
    shift_right shiftR_unit(a, num, shiftR_result);
 	shift_arithmetic_right shiftAR_unit(a, num, shiftAR_result);
 	rotate_left rotateL_unit(a, num, rotateL_result);
-//   rotateR rotateR_unit(.a(A), .r_num(num), .rotateR_result(rotateR_result));
+   rotate_right rotateR_unit(a, num, rotateR_result);
    
    // Select operation
    always @(*) begin
@@ -43,12 +44,13 @@ module ALU(input [31:0] a, b, num,
 //         4	: 	result = add_result;
 //         4'b0101: result = sub_result;
 //         4'b0110: result = mul_result;
-//         4'b0111: result = div_result;
+			7	:	result = div_result;
+//         7	:	result = div_result, remainder = rem_result;
          8	:	result = shiftL_result;
          9	:	result = shiftR_result;
 			10	:	result = shiftAR_result;
 			11	:	result = rotateL_result;
-//         4'b1101: result = rotateR_result;
+			12 :  result = rotateR_result;
          default: result = 32'b0;
       endcase
    end
