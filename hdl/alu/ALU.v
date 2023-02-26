@@ -1,7 +1,7 @@
-module ALU(input [31:0] A, B, 
+module alu(input [31:0] A, B, 
            input [3:0] opcode, 
            output [31:0] result, 
-           output carry_out, 
+           output carry_out,  
            output overflow);
    
    // Simple operations

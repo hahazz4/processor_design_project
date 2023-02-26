@@ -7,21 +7,11 @@ input encodeIN_r7, input encodeIN_r8, input encodeIN_r9, input encodeIN_r10,
 input encodeIN_r11, input encodeIN_r12, input encodeIN_r13, input encodeIN_r14, 
 input encodeIN_r15, input encodeIN_HI, input encodeIN_LO, input encodeIN_Z_HI, 
 input encodeIN_Z_LO, input encodeIN_PC, input encodeIN_MDR, input encodeIN_InPort, 
-input encodeIN_Cout, input encodeIN_24, input encodeIN_25, input encodeIN_26, 
-input encodeIN_27, input encodeIN_28, input encodeIN_29, input encodeIN_30, 
-input encodeIN_31, output [4:0] select_signals_OUT);
+input encodeIN_Cout, output [4:0] select_signals_OUT);
 
     /* While loop to update the select_signals_OUT output wire. */
     always @* begin
-        if (encodeIN_31) select_signals_OUT <= 5'b11111;
-        else if (encodeIN_30) select_signals_OUT <= 5'b11110;
-        else if (encodeIN_29) select_signals_OUT <= 5'b11101;
-        else if (encodeIN_28) select_signals_OUT <= 5'b11100;
-        else if (encodeIN_27) select_signals_OUT <= 5'b11011;
-        else if (encodeIN_26) select_signals_OUT <= 5'b11010;
-        else if (encodeIN_25) select_signals_OUT <= 5'b11001;
-        else if (encodeIN_24) select_signals_OUT <= 5'b11000;
-        else if (encodeIN_Cout) select_signals_OUT <= 5'b10111;
+        if (encodeIN_Cout) select_signals_OUT <= 5'b10111;
         else if (encodeIN_InPort) select_signals_OUT <= 5'b10110;
         else if (encodeIN_MDR) select_signals_OUT <= 5'b10101;
         else if (encodeIN_PC) select_signals_OUT <= 5'b10100;

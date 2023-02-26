@@ -1,5 +1,9 @@
 /* Representation of the datapath in Verilog HDL. */
 /* Connected outputs of encoder to select signals in multiplexer. */
+`include "hdl\general_reg\register.v"
+`include "hdl\md_reg\md_register.v"
+`include "hdl\alu\alu.v"
+
 module datapath(
 	// CPU signals
 	input clk, 
@@ -36,10 +40,10 @@ module datapath(
 	output wire [31:0] bus_Data, //Data current in the bus
 	output wire [31:0] alu_HI_Data, alu_LO_Data, // Output of the ALU that feeds into Z_HI and Z_LO registers
 	
-	output wire [31:0] R0_busMuxIN, R1_busMuxIN, R2_busMuxIN, R3_busMuxIN,
-	output wire [31:0] R4_busMuxIN, R5_busMuxIN, R6_busMuxIN, R7_busMuxIN,
-	output wire [31:0] R8_busMuxIN, R9_busMuxIN, R10_busMuxIN, R11_busMuxIN,
-	output wire [31:0] R12_busMuxIN, R13_busMuxIN, R14_busMuxIN, R15_busMuxIN,
+	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
+	output wire [31:0] R4_Data, R5_Data, R6_Data, R7_Data,
+	output wire [31:0] R8_Data, R9_Data, R10_Data, R11_Data,
+	output wire [31:0] R12_Data, R13_Data, R14_Data, R15_Data,
 
 	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
@@ -52,35 +56,35 @@ module datapath(
 );
 
 	// General purpose registers r0-r15
-	register r0 (.clk(clk), .clr(clr), .enable(r0_enable), .D(bus_Data), .Q(R0_busMuxIN)); 
-	register r1 (.clk(clk), .clr(clr), .enable(r1_enable), .D(bus_Data), .Q(R1_busMuxIN)); 
-	register r2 (.clk(clk), .clr(clr), .enable(r2_enable), .D(bus_Data), .Q(R2_busMuxIN));
-	register r3 (.clk(clk), .clr(clr), .enable(r3_enable), .D(bus_Data), .Q(R3_busMuxIN));
-	register r4 (.clk(clk), .clr(clr), .enable(r4_enable), .D(bus_Data), .Q(R4_busMuxIN));
-	register r5 (.clk(clk), .clr(clr), .enable(r5_enable), .D(bus_Data), .Q(R5_busMuxIN));
-	register r6 (.clk(clk), .clr(clr), .enable(r6_enable), .D(bus_Data), .Q(R6_busMuxIN));
-	register r7 (.clk(clk), .clr(clr), .enable(r7_enable), .D(bus_Data), .Q(R7_busMuxIN));
-	register r8 (.clk(clk), .clr(clr), .enable(r8_enable), .D(bus_Data), .Q(R8_busMuxIN));
-	register r9 (.clk(clk), .clr(clr), .enable(r9_enable), .D(bus_Data), .Q(R9_busMuxIN));
-	register r10 (.clk(clk), .clr(clr), .enable(r10_enable), .D(bus_Data), .Q(R10_busMuxIN));
-	register r11 (.clk(clk), .clr(clr), .enable(r11_enable), .D(bus_Data), .Q(R11_busMuxIN));
-	register r12 (.clk(clk), .clr(clr), .enable(r12_enable), .D(bus_Data), .Q(R12_busMuxIN));
-	register r13 (.clk(clk), .clr(clr), .enable(r13_enable), .D(bus_Data), .Q(R13_busMuxIN));
-	register r14 (.clk(clk), .clr(clr), .enable(r14_enable), .D(bus_Data), .Q(R14_busMuxIN));
-	register r15 (.clk(clk), .clr(clr), .enable(r15_enable), .D(bus_Data), .Q(R15_busMuxIN));
+	register r0 (.clk(clk), .clr(clr), .enable(r0_enable), .D(bus_Data), .Q(R0_Data)); 
+	register r1 (.clk(clk), .clr(clr), .enable(r1_enable), .D(bus_Data), .Q(R1_Data)); 
+	register r2 (.clk(clk), .clr(clr), .enable(r2_enable), .D(bus_Data), .Q(R2_Data));
+	register r3 (.clk(clk), .clr(clr), .enable(r3_enable), .D(bus_Data), .Q(R3_Data));
+	register r4 (.clk(clk), .clr(clr), .enable(r4_enable), .D(bus_Data), .Q(R4_Data));
+	register r5 (.clk(clk), .clr(clr), .enable(r5_enable), .D(bus_Data), .Q(R5_Data));
+	register r6 (.clk(clk), .clr(clr), .enable(r6_enable), .D(bus_Data), .Q(R6_Data));
+	register r7 (.clk(clk), .clr(clr), .enable(r7_enable), .D(bus_Data), .Q(R7_Data));
+	register r8 (.clk(clk), .clr(clr), .enable(r8_enable), .D(bus_Data), .Q(R8_Data));
+	register r9 (.clk(clk), .clr(clr), .enable(r9_enable), .D(bus_Data), .Q(R9_Data));
+	register r10 (.clk(clk), .clr(clr), .enable(r10_enable), .D(bus_Data), .Q(R10_Data));
+	register r11 (.clk(clk), .clr(clr), .enable(r11_enable), .D(bus_Data), .Q(R11_Data));
+	register r12 (.clk(clk), .clr(clr), .enable(r12_enable), .D(bus_Data), .Q(R12_Data));
+	register r13 (.clk(clk), .clr(clr), .enable(r13_enable), .D(bus_Data), .Q(R13_Data));
+	register r14 (.clk(clk), .clr(clr), .enable(r14_enable), .D(bus_Data), .Q(R14_Data));
+	register r15 (.clk(clk), .clr(clr), .enable(r15_enable), .D(bus_Data), .Q(R15_Data));
 
 	// C Output Registers
-	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_busMuxIN));
-	register LO (.clk(clk), .clr(clr), .enable(LO_enable), .D(bus_Data), .Q(LO_busMuxIN));
-	register Z_HI (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_HI), .Q(Z_HI_busMuxIN));
-	register Z_LO (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_LO), .Q(Z_LO_busMuxIN));
-	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_busMuxIN));
+	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_Data));
+	register LO (.clk(clk), .clr(clr), .enable(LO_enable), .D(bus_Data), .Q(LO_Data));
+	register Z_HI (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_HI), .Q(Z_HI_Data));
+	register Z_LO (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_LO), .Q(Z_LO_Data));
+	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_Data));
 
 	// PC and IR Registers
-	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(bus_Data), .Q(PC_busMuxIN));
-	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_busMuxIN));
+	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(bus_Data), .Q(PC_Data));
+	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
-	memory_data_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .D1(bus_Data), .D2(MDataIN), .sel(MDR_select), .Q(MDR_busMuxIN));
+	memory_data_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .D1(bus_Data), .D2(MDataIN), .sel(MDR_select), .Q(MDR_Data));
 
 	// Encoder Instance
     encoder encoder_instance(.encodeIN_r0(r0_select), .encodeIN_r1(r1_select), .encodeIN_r2(r2_select), 
@@ -92,12 +96,14 @@ module datapath(
     .encodeIN_Cout(c_select), .select_signals_OUT(encode_sel_signal));
 
 	// Output from the register is the input to the MUX
-    multiplexer multiplexer_instance(.select_signals_IN(encode_sel_signal), .muxIN_r0(R0_busMuxIN), 
-    .muxIN_r1(R1_busMuxIN), .muxIN_r2(R2_busMuxIN), .muxIN_r3(R3_busMuxIN), .muxIN_r4(R4_busMuxIN),
-    .muxIN_r5(R5_busMuxIN), .muxIN_r6(R6_busMuxIN), .muxIN_r7(R7_busMuxIN), .muxIN_r8(R8_busMuxIN),
-    .muxIN_r9(R9_busMuxIN), .muxIN_r10(R10_busMuxIN), .muxIN_r11(R11_busMuxIN), .muxIN_r12(R12_busMuxIN),
-    .muxIN_r13(R13_busMuxIN), .muxIN_r14(R14_busMuxIN), .muxIN_r15(R15_busMuxIN), .muxIN_HI(HI_busMuxIN),
-    .muxIN_LO(LO_busMuxIN), .muxIN_Z_HI(Z_HI_busMuxIN), .muxIN_Z_LO(Z_LO_busMuxIN), .muxIN_PC(PC_busMuxIN), 
-    .muxIN_MDR(MDR_busMuxIN), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
+    multiplexer multiplexer_instance(.select_signals_IN(encode_sel_signal), .muxIN_r0(R0_Data), 
+    .muxIN_r1(R1_Data), .muxIN_r2(R2_Data), .muxIN_r3(R3_Data), .muxIN_r4(R4_Data),
+    .muxIN_r5(R5_Data), .muxIN_r6(R6_Data), .muxIN_r7(R7_Data), .muxIN_r8(R8_Data),
+    .muxIN_r9(R9_Data), .muxIN_r10(R10_Data), .muxIN_r11(R11_Data), .muxIN_r12(R12_Data),
+    .muxIN_r13(R13_Data), .muxIN_r14(R14_Data), .muxIN_r15(R15_Data), .muxIN_HI(HI_Data),
+    .muxIN_LO(LO_Data), .muxIN_Z_HI(Z_HI_Data), .muxIN_Z_LO(Z_LO_Data), .muxIN_PC(PC_Data), 
+    .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
+
+	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(), .carry_out(), .overflow());
     
 endmodule //Datapath end.
