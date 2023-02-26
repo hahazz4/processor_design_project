@@ -2,22 +2,20 @@
 //32-bit Ripple Carry Adder
 module carryRippleAdder32(input [31:0] a, b,
                           input c_in,
-                          output [31:0] sum,
-                          output co);
-    wire c_in28, c_in32;
-    carryRippleAdder16 m1(c_in28, sum[15:0], a[15:0], b[15:0], c_in16);
-    carryRippleAdder16 m2(c_in32, sum[31:15], a[31:15], b[31:15], c_in32);
+                          output [31:0] sum);
+	wire c_in28, co;
+	carryRippleAdder16 m1(c_in28, sum[15:0], a[15:0], b[15:0], c_in);
+	carryRippleAdder16 m2(co, sum[31:15], a[31:15], b[31:15], c_in28);
 endmodule
 
 module carryRippleAdder16(input [15:0] a, b,
                           input c_in,
-                          output [15:0] sum,
-                          output co);
-    wire c_in4, c_in8, c_in12;
-    carryRippleAdder4 m1(c_in14, sum[3:0], a[3:0], b[3:0], c_in);
-    carryRippleAdder4 m2(c_in15, sum[7:4], a[7:4], b[7:4], c_in);
-    carryRippleAdder4 m3(c_in16, sum[11:8], a[11:8], b[11:8], c_in);
-    carryRippleAdder4 m4(co, sum[15:12], a[15:12], b[15:12], c_in);
+                          output [15:0] sum);
+    wire c_in4, c_in8, c_in12, co;
+    carryRippleAdder4 m1(c_in4, sum[3:0], a[3:0], b[3:0], c_in);
+    carryRippleAdder4 m2(c_in8, sum[7:4], a[7:4], b[7:4], c_in4);
+    carryRippleAdder4 m3(c_in12, sum[11:8], a[11:8], b[11:8], c_in8);
+    carryRippleAdder4 m4(co, sum[15:12], a[15:12], b[15:12], c_in12);
 endmodule
 
 module carryRippleAdder4(input [3:0] a, b,
@@ -33,7 +31,7 @@ module carryRippleAdder4(input [3:0] a, b,
 endmodule
 
 module full_adder(input a, b, c_in,
-                  output su, co)
+                  output su, co);
 
     wire w1, w2, w3;
     half_adder m1(w2, w1, a, b);
@@ -42,7 +40,7 @@ module full_adder(input a, b, c_in,
 endmodule
 
 module half_adder(input a, b, c_in,
-                  output su, co)
+                  output su, co);
     xor m1(su, a, b);
     and m2(co, a, b);
 endmodule

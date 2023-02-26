@@ -1,5 +1,5 @@
-module shift_right(input [31:0] A, s_num,
-                  output [31:0] shiftR_result);
+module shift_right(input [31:0] a, s_num,
+                  output wire [31:0] shiftR_result);
 
-    assign shiftR_result[31:0] = shiftR_result >> s_num;         //shifts right n amount of times
+    assign shiftR_result = a >> s_num;         //shifts left n amount of times
 endmodule

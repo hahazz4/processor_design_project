@@ -1,0 +1,22 @@
+`timescale 1ns/10ps
+module ALU_tb;
+
+	reg [31:0] a, b;
+	reg [4:0] opcode;
+	
+	wire [31:0] ALU_result;
+
+	ALU alu_unit(a, b, opcode, ALU_result);
+
+	initial
+		begin
+			a <= 2; //0010
+			b <= 3; //0011
+			//result = 0010
+			opcode <= 0;
+			
+			#200
+			opcode <= 1;
+			//result = 0011
+		end
+endmodule
