@@ -38,7 +38,7 @@ module datapath(
 
 	// Data Signals
 	output wire [31:0] bus_Data, //Data current in the bus
-	output wire [31:0] alu_HI_Data, alu_LO_Data, // Output of the ALU that feeds into Z_HI and Z_LO registers
+	output wire [63:0] aluResult;
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
 	output wire [31:0] R4_Data, R5_Data, R6_Data, R7_Data,
@@ -104,6 +104,6 @@ module datapath(
     .muxIN_LO(LO_Data), .muxIN_Z_HI(Z_HI_Data), .muxIN_Z_LO(Z_LO_Data), .muxIN_PC(PC_Data), 
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
-	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(), .carry_out(), .overflow());
+	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
     
-endmodule //Datapath end.
+endmodule // Datapath end.
