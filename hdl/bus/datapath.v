@@ -19,6 +19,7 @@ module datapath(
 	input wire Z_HI_enable, Z_LO_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
+	input wire ZMuxEnable,
 
 	// Encoder Output Select Signals
 	input wire r0_select, r1_select, r2_select, r3_select, 
@@ -30,7 +31,7 @@ module datapath(
 	input wire Z_HI_select, Z_LO_select, 
 	input wire MDR_select,
 	input wire InPort_select,
-	input wire c_select,
+	input wire c_select, ZSelect,
 	output wire [4:0] encode_sel_signal,
 	
 	// ALU Opcode
@@ -51,7 +52,7 @@ module datapath(
 	output wire [31:0] MAR_Data, MDR_Data,
 	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] InPort_Data,
-	output wire [31:0] C_sign_ext_Data, C_out_HI, C_out_LO,
+	output wire [31:0] C_sign_ext_Data,
 	input wire [31:0] MDataIN
 );
 
@@ -76,8 +77,8 @@ module datapath(
 	// C Output Registers
 	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_Data));
 	register LO (.clk(clk), .clr(clr), .enable(LO_enable), .D(bus_Data), .Q(LO_Data));
-	register Z_HI (.clk(clk), .clr(clr), .enable(Z_HI_enable), .D(C_out_HI), .Q(Z_HI_Data));
-	register Z_LO (.clk(clk), .clr(clr), .enable(Z_LO_enable), .D(C_out_LO), .Q(Z_LO_Data));
+	register Z_HI (.clk(clk), .clr(clr), .enable(Z_HI_enable), .D(bus_Data), .Q(Z_HI_Data));
+	register Z_LO (.clk(clk), .clr(clr), .enable(Z_LO_enable), .D(bus_Data), .Q(Z_LO_Data));
 	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_Data));
 
 	// PC and IR Registers
@@ -105,7 +106,6 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
-    assign C_out_LO = aluResult[31:0];
-	assign C_out_HI = aluResult[63:32];
+   	ZMux ZMuxInstance(aluResult, ZSelect, ZMuxEnable, bus_Data);
 
 endmodule // Datapath end.
