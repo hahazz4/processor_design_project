@@ -101,7 +101,15 @@ NOTT4 =  87,
 NOTT5 =  88;
 reg [8:0] Present_state = Default;
  
-DataPath DUT(PCout, ZLOout, MDRout,R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, clock, ALUIn, ZMuxEnable, ZSelect, ZMuxOut, Mdatain, alucontrol, out);
+//datapath DUT(PCout, ZLOout, MDRout,R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, clock, ALUIn, ZMuxEnable, ZSelect, ZMuxOut, Mdatain, alucontrol, out);
+datapath DUT(clk, clr, r0_enable, r1_enable, r2_enable, r3_enable, r4_enable, r5_enable, r6_enable, r7_enable, r8_enable, r9_enable, r10_enable, r11_enable, 
+r12_enable, r13_enable, r14_enable, r15_enable, PC_enable, IR_enable, Y_enable, Z_HI_enable, Z_LO_enable, MAR_enable, MDR_enable, HI_enable, LO_enable,
+ZMuxEnable, r0_select, r1_select, r2_select, r3_select, r4_select, r5_select, r6_select, r7_select, r8_select, r9_select, r10_select, r11_select, 
+r12_select, r13_select, r14_select, r15_select, PC_select, HI_select, LO_select, Z_HI_select, Z_LO_select, MDR_select, InPort_select,
+c_select, ZSelect, encode_sel_signal, alu_instruction, bus_Data, aluResult, R0_Data, R1_Data, R2_Data, R3_Data, R4_Data, R5_Data, R6_Data, R7_Data,
+R8_Data, R9_Data, R10_Data, R11_Data, R12_Data, R13_Data, R14_Data, R15_Data,
+PC_Data, IR_Data, Y_Data, Z_HI_Data, Z_LO_Data, MAR_Data, MDR_Data, HI_Data, LO_Data, InPort_Data, C_sign_ext_Data, MDataIN
+);
 
 // add test logic here
 always #10 clock = ~clock;

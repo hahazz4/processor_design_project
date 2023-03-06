@@ -15,6 +15,6 @@ module rotate_left (
     shift_left leftShiftTwo(A, (32 - B), shiftTwoResult);       // Shifts left (32 - B) times
 
     // OR Operation Instance
-    or orInstance(shiftOneResult, shiftTwoResult, result);      // Performs the OR operation and produces the final result
+    logical_or orInstance(shiftOneResult, shiftTwoResult, result);      // Performs the OR operation and produces the final result
 
 endmodule // rotate_left end.

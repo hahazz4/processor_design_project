@@ -15,6 +15,6 @@ module rotate_right (
     shift_right rightShiftTwo(A, B, shiftTwoResult);            // Shifts right B times
     
     // OR Operation Instance
-    or orInstance(shiftOneResult, shiftTwoResult, result);      // Performs the OR operation and produces the final result
+    logical_or orInstance(shiftOneResult, shiftTwoResult, result);      // Performs the OR operation and produces the final result
 
 endmodule // rotate_right end.
