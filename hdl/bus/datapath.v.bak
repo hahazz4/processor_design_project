@@ -106,6 +106,6 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
-   ZMux ZMuxInstance(.aluOutput(aluResult), .ZSelect(ZSelect), .ZMuxEnable(ZMuxEnable), .bus_Data(bus_Data));
+   	ZMux ZMuxInstance(aluResult, ZSelect, ZMuxEnable, bus_Data);
 
 endmodule // Datapath end.

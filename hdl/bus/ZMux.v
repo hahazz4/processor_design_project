@@ -13,11 +13,11 @@ reg [31:0] Zout;
 
 always @ (ZMuxEnable) begin
 	if (ZSelect) begin
-		Zout = ZMuxIn[63:32];
+		Zout = aluOutput[63:32];
 	end
 	else begin
-		Zout = ZMuxIn[31:0];
+		Zout = aluOutput[31:0];
 	end
 end
-assign BusMuxOut = Zout;
+assign bus_Data = Zout;
 endmodule
