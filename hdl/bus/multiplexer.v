@@ -38,7 +38,7 @@ input [31:0] muxIN_InPort, input [31:0] muxIN_C_sign_ext, output reg [31:0] muxO
                 5'b10100: muxOut <= muxIN_PC;
                 5'b10101: muxOut <= muxIN_MDR;
                 5'b10110: muxOut <= muxIN_InPort;
-                5'b10111: muxOut <= muxINmux_C_sign_ext;
+                5'b10111: muxOut <= muxIN_C_sign_ext;
                 default: muxOut <= 0;
             endcase
         end

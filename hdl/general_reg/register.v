@@ -6,7 +6,6 @@ module register(input clk, input clr, input enable, input [31:0] D, output reg [
     /* While loop that iterates every positive clock edge. */
     always @(posedge clk) 
     begin
-        
         /* If clear signal is high, set Q output to 0. */
         if(clr)
             Q <= 0;

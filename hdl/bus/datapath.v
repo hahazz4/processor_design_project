@@ -1,8 +1,8 @@
 /* Representation of the datapath in Verilog HDL. */
 /* Connected outputs of encoder to select signals in multiplexer. */
-`include "hdl\general_reg\register.v"
-`include "hdl\md_reg\md_register.v"
-`include "hdl\alu\alu.v"
+`include "C:/Users/nicky/Desktop/Code/processor_design_project/hdl/general_reg/register.v"
+`include "C:/Users/nicky/Desktop/Code/processor_design_project/hdl/md_reg/md_register.v"
+`include "C:/Users/nicky/Desktop/Code/processor_design_project/hdl/alu/alu.v"
 
 module datapath(
 	// CPU signals
@@ -16,7 +16,7 @@ module datapath(
 	input wire r12_enable, r13_enable, r14_enable, r15_enable, 
 	input wire PC_enable, IR_enable, 
 	input wire Y_enable, 
-	input wire Z_enable, 
+	input wire Z_HI_enable, Z_LO_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
 
@@ -30,15 +30,15 @@ module datapath(
 	input wire Z_HI_select, Z_LO_select, 
 	input wire MDR_select,
 	input wire InPort_select,
-	input wire c_select
-	output wire [4:0] encode_sel_signal;
+	input wire c_select,
+	output wire [4:0] encode_sel_signal,
 	
 	// ALU Opcode
-	input wire [4:0] alu_instruction;
+	input wire [4:0] alu_instruction,
 
 	// Data Signals
 	output wire [31:0] bus_Data, //Data current in the bus
-	output wire [63:0] aluResult;
+	output wire [63:0] aluResult,
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
 	output wire [31:0] R4_Data, R5_Data, R6_Data, R7_Data,
@@ -51,7 +51,7 @@ module datapath(
 	output wire [31:0] MAR_Data, MDR_Data,
 	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] InPort_Data,
-	output wire [31:0] C_sign_ext_Data
+	output wire [31:0] C_sign_ext_Data, C_out_HI, C_out_LO,
 	input wire [31:0] MDataIN
 );
 
@@ -76,15 +76,15 @@ module datapath(
 	// C Output Registers
 	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_Data));
 	register LO (.clk(clk), .clr(clr), .enable(LO_enable), .D(bus_Data), .Q(LO_Data));
-	register Z_HI (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_HI), .Q(Z_HI_Data));
-	register Z_LO (.clk(clk), .clr(clr), .enable(Z_enable), .D(C_out_LO), .Q(Z_LO_Data));
+	register Z_HI (.clk(clk), .clr(clr), .enable(Z_HI_enable), .D(C_out_HI), .Q(Z_HI_Data));
+	register Z_LO (.clk(clk), .clr(clr), .enable(Z_LO_enable), .D(C_out_LO), .Q(Z_LO_Data));
 	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_Data));
 
 	// PC and IR Registers
 	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(bus_Data), .Q(PC_Data));
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
-	memory_data_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .D1(bus_Data), .D2(MDataIN), .sel(MDR_select), .Q(MDR_Data));
+	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .D1(bus_Data), .D2(MDataIN), .sel(MDR_select), .Q(MDR_Data));
 
 	// Encoder Instance
     encoder encoder_instance(.encodeIN_r0(r0_select), .encodeIN_r1(r1_select), .encodeIN_r2(r2_select), 
@@ -105,5 +105,7 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
-    
+    assign C_out_LO = aluResult[31:0];
+	assign C_out_HI = aluResult[63:32];
+
 endmodule // Datapath end.

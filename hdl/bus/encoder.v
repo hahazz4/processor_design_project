@@ -7,7 +7,7 @@ input encodeIN_r7, input encodeIN_r8, input encodeIN_r9, input encodeIN_r10,
 input encodeIN_r11, input encodeIN_r12, input encodeIN_r13, input encodeIN_r14, 
 input encodeIN_r15, input encodeIN_HI, input encodeIN_LO, input encodeIN_Z_HI, 
 input encodeIN_Z_LO, input encodeIN_PC, input encodeIN_MDR, input encodeIN_InPort, 
-input encodeIN_Cout, output [4:0] select_signals_OUT);
+input encodeIN_Cout, output reg [4:0] select_signals_OUT);
 
     /* While loop to update the select_signals_OUT output wire. */
     always @* begin
