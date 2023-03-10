@@ -6,7 +6,7 @@ module datapath(
 	input clk, 
 	input clr, 
 	
-	// Register enable signals
+	// Register write/enable signals
 	input wire r0_enable, r1_enable, r2_enable, r3_enable, 
 	input wire r4_enable, r5_enable, r6_enable, r7_enable, 
 	input wire r8_enable, r9_enable, r10_enable, r11_enable, 
@@ -16,7 +16,6 @@ module datapath(
 	input wire Z_HI_enable, Z_LO_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
-	input wire ZMuxEnable,
 
 	// Encoder Output Select Signals
 	input wire r0_select, r1_select, r2_select, r3_select, 
@@ -28,7 +27,7 @@ module datapath(
 	input wire Z_HI_select, Z_LO_select, 
 	input wire MDR_select, MAR_enable,
 	input wire InPort_select,
-	input wire c_select, ZSelect,
+	input wire c_select,
 	output wire [4:0] encode_sel_signal,
 	
 	// ALU Opcode
