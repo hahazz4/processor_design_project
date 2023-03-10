@@ -11,11 +11,13 @@ module datapath(
 	input wire r4_enable, r5_enable, r6_enable, r7_enable, 
 	input wire r8_enable, r9_enable, r10_enable, r11_enable, 
 	input wire r12_enable, r13_enable, r14_enable, r15_enable, 
-	input wire PC_enable, IR_enable, 
-	input wire Y_enable, 
-	input wire Z_HI_enable, Z_LO_enable, 
+	input wire PC_enable, PC_increment_enable, IR_enable, 
+	input wire Y_enable, Z_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
+
+	// Memory Data Multiplexer Read/Select Signal
+	input wire read,
 
 	// Encoder Output Select Signals
 	input wire r0_select, r1_select, r2_select, r3_select, 
@@ -25,7 +27,7 @@ module datapath(
 	input wire PC_select,
 	input wire HI_select, LO_select, 
 	input wire Z_HI_select, Z_LO_select, 
-	input wire MDR_select, MAR_enable,
+	input wire MDR_select,
 	input wire InPort_select,
 	input wire c_select,
 	output wire [4:0] encode_sel_signal,
@@ -33,8 +35,11 @@ module datapath(
 	// ALU Opcode
 	input wire [4:0] alu_instruction,
 
-	// Data Signals
-	output wire [31:0] bus_Data, //Data current in the bus
+	// Input Data Signals
+	input wire [31:0] MDataIN,
+
+	// Output Data Signals
+	output wire [31:0] bus_Data, // Data currently in the bus
 	output wire [63:0] aluResult,
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
@@ -42,14 +47,13 @@ module datapath(
 	output wire [31:0] R8_Data, R9_Data, R10_Data, R11_Data,
 	output wire [31:0] R12_Data, R13_Data, R14_Data, R15_Data,
 
-	output wire [31:0] PC_Data, IR_Data,
+	output wire [31:0] PC_Data, IR_Data, PC_IncData, tempPC,
 	output wire [31:0] Y_Data,
 	output wire [31:0] Z_HI_Data, Z_LO_Data,
 	output wire [31:0] MAR_Data, MDR_Data,
 	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] InPort_Data,
-	output wire [31:0] C_sign_ext_Data,
-	input wire [31:0] MDataIN
+	output wire [31:0] C_sign_ext_Data
 );
 
 	// General purpose registers r0-r15
@@ -73,16 +77,18 @@ module datapath(
 	// C Output Registers
 	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_Data));
 	register LO (.clk(clk), .clr(clr), .enable(LO_enable), .D(bus_Data), .Q(LO_Data));
-	register Z_HI (.clk(clk), .clr(clr), .enable(Z_HI_enable), .D(aluResult[63:32]), .Q(Z_HI_Data));
-	register Z_LO (.clk(clk), .clr(clr), .enable(Z_LO_enable), .D(aluResult[31:0]), .Q(Z_LO_Data));
+	register Z_HI (.clk(clk), .clr(clr), .enable(Z_enable), .D(aluResult[63:32]), .Q(Z_HI_Data));
+	register Z_LO (.clk(clk), .clr(clr), .enable(Z_enable), .D(aluResult[31:0]), .Q(Z_LO_Data));
 	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_Data));
 
 	// PC and IR Registers
-	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(bus_Data), .Q(PC_Data));
+	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(tempPC), .Q(PC_Data));
+	pc_increment PC_Inc (.PC_Data_IN(PC_Data), .PC_Data_OUT(PC_IncData));
+	assign tempPC = (PC_increment_enable == 1)? PC_IncData : bus_Data;
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
-	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D1(bus_Data), .Q(MAR_Data));
-	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .D1(bus_Data), .D2(MDataIN), .sel(MDR_select), .Q(MDR_Data));
+	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D(bus_Data), .Q(MAR_Data));
+	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .select(read), .D1(bus_Data), .D2(MDataIN), .Q(MDR_Data));
 
 	// Encoder Instance
     encoder encoder_instance(.encodeIN_r0(r0_select), .encodeIN_r1(r1_select), .encodeIN_r2(r2_select), 

@@ -1,5 +1,5 @@
 /* Representation of a memory data register with 2 to 1 multiplexer in Verilog */
-module md_register(input clk, input clr, input enable, input [31:0] D1, input [31:0] D2, input sel, output reg [31:0] Q);
+module md_register(input clk, input clr, input enable, input select, input [31:0] D1, input [31:0] D2, output reg [31:0] Q);
 
     /* While loop that iterates every positive clock edge. */
     always @(posedge clk) 
@@ -11,6 +11,6 @@ module md_register(input clk, input clr, input enable, input [31:0] D1, input [3
 
         /* If enable signal is high, set Q output to follow (or equal to) D input. */
         else if(enable)
-            Q <= sel ? D1 : D2;        
+            Q <= select ? D1 : D2;        
     end
 endmodule // md_register end.
