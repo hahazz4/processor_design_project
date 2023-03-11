@@ -29,7 +29,7 @@ module datapath_and_tb;
 	reg MDR_select;
 	reg InPort_select;
 	reg c_select;
-	reg [4:0] encode_sel_signal;
+	wire [4:0] encode_sel_signal;
 	
 	// ALU Opcode
 	reg [4:0] alu_instruction;
@@ -39,20 +39,20 @@ module datapath_and_tb;
 
 	// Output Data Signals
 	wire [31:0] bus_Data; // Data currently in the bus
-	reg [63:0] aluResult;
+	wire [63:0] aluResult;
 	
 	wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data;
-	reg [31:0] R4_Data, R5_Data, R6_Data, R7_Data;
-	reg [31:0] R8_Data, R9_Data, R10_Data, R11_Data;
-	reg [31:0] R12_Data, R13_Data, R14_Data, R15_Data;
+	wire [31:0] R4_Data, R5_Data, R6_Data, R7_Data;
+	wire [31:0] R8_Data, R9_Data, R10_Data, R11_Data;
+	wire [31:0] R12_Data, R13_Data, R14_Data, R15_Data;
 
-	reg [31:0] PC_Data, IR_Data, PC_IncData, tempPC;
-	reg [31:0] Y_Data;
-	reg [31:0] Z_HI_Data, Z_LO_Data;
-	reg [31:0] MAR_Data, MDR_Data;
-	reg [31:0] HI_Data, LO_Data;
-	reg [31:0] InPort_Data;
-	reg [31:0] C_sign_ext_Data;
+	wire [31:0] PC_Data, IR_Data, PC_IncData, tempPC;
+	wire [31:0] Y_Data;
+	wire [31:0] Z_HI_Data, Z_LO_Data;
+	wire [31:0] MAR_Data, MDR_Data;
+	wire [31:0] HI_Data, LO_Data;
+	wire [31:0] InPort_Data;
+	wire [31:0] C_sign_ext_Data;
 
 	// Time Signals and Load Registers
 	parameter Default = 4'b0000, 
@@ -146,8 +146,8 @@ module datapath_and_tb;
 		begin
 			case (Present_state) // assert the required signals in each clk cycle
 				Default: begin
-					PC_Data <= 0; Z_LO_Data <= 0; MDR_Data <= 0; // initialize the signals
-					R2_Data <= 0; R3_Data <= 0; MAR_enable <= 0; Z_enable <= 0;
+				 	PC_select <= 0; Z_LO_select <= 0; MDR_select <= 0; // initialize the signals
+					r2_select <= 0; r3_select <= 0; MAR_enable <= 0; Z_enable <= 0;
 					PC_enable <=0; MDR_enable <= 0; IR_enable <= 0; Y_enable <= 0;
 					PC_increment_enable <= 0; read <= 0; alu_instruction <= 0;
 					r1_enable <= 0; r2_enable <= 0; r3_enable <= 0; MDataIN <= 32'h00000000;
@@ -161,8 +161,8 @@ module datapath_and_tb;
 			end
  
 			Reg_load1b: begin
-				#10 MDR_Data <= 1; r2_enable <= 1;
-				#15 MDR_Data <= 0; r2_enable <= 0; // initialize R2 with the value $12
+				#10 MDR_select <= 1; r2_enable <= 1;
+				#15 MDR_select <= 0; r2_enable <= 0; // initialize R2 with the value $12
 			end
 		 
 			Reg_load2a: begin
@@ -172,8 +172,8 @@ module datapath_and_tb;
 			end
 			
 			 Reg_load2b: begin
-				#10 MDR_Data <= 1; r3_enable <= 1;
-				#15 MDR_Data <= 0; r3_enable <= 0; // initialize R3 with the value $14
+				#10 MDR_select <= 1; r3_enable <= 1;
+				#15 MDR_select <= 0; r3_enable <= 0; // initialize R3 with the value $14
 			end
 			
 			Reg_load3a: begin
@@ -183,35 +183,35 @@ module datapath_and_tb;
 			end
 			
 			 Reg_load3b: begin
-				#10 MDR_Data <= 1; r1_enable <= 1;
-				#15 MDR_Data <= 0; r1_enable <= 0; // initialize R1 with the value $18
+				#10 MDR_select <= 1; r1_enable <= 1;
+				#15 MDR_select <= 0; r1_enable <= 0; // initialize R1 with the value $18
 			end
 			
 			T0: begin // see if you need to de-assert these signals
-				#10 PC_Data <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
-				#15 PC_Data <= 0; MAR_enable <= 0; PC_increment_enable <= 0; Z_enable <= 0;
+				#10 PC_select <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
+				#15 PC_select <= 0; MAR_enable <= 0; PC_increment_enable <= 0; Z_enable <= 0;
 			end
 			
 			T1: begin
-				#10 Z_LO_Data <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1;
-					MDataIN <= 32'h28918000; // opcode for â€œalu_instruction R1, R2, R3â€
-				#15 Z_LO_Data <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
+				#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1;
+					MDataIN <= 32'h28918000; // opcode for Ã¢â‚¬Å“alu_instruction R1, R2, R3Ã¢â‚¬Â
+				#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
 			end
 			
 			T2: begin
-				MDR_Data <= 1; IR_enable <= 1;
+				MDR_select <= 1; IR_enable <= 1;
 			end
 			
 			T3: begin
-				R2_Data <= 1; Y_enable <= 1;
+				r2_select <= 1; Y_enable <= 1;
 			end
 			
 			T4: begin
-				R3_Data <= 1; alu_instruction <= 1; Z_enable <= 1;
+				r3_select <= 1; alu_instruction <= 1; Z_enable <= 1;
 			end
 			
 			T5: begin
-				Z_LO_Data <= 1; r1_enable <= 1;
+				Z_LO_select <= 1; r1_enable <= 1;
 			end
 		endcase
 	end

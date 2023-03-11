@@ -3,8 +3,8 @@
 
 module datapath(
 	// CPU signals
-	input clk, 
-	input clr, 
+	input wire clk, 
+	input wire clr, 
 	
 	// Register write/enable signals
 	input wire r0_enable, r1_enable, r2_enable, r3_enable, 
@@ -83,8 +83,11 @@ module datapath(
 
 	// PC and IR Registers
 	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(tempPC), .Q(PC_Data));
+	
 	pc_increment PC_Inc (.PC_Data_IN(PC_Data), .PC_Data_OUT(PC_IncData));
+	
 	assign tempPC = (PC_increment_enable == 1)? PC_IncData : bus_Data;
+	
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
 	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D(bus_Data), .Q(MAR_Data));
