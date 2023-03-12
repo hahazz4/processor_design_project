@@ -47,7 +47,7 @@ module datapath(
 	output wire [31:0] R8_Data, R9_Data, R10_Data, R11_Data,
 	output wire [31:0] R12_Data, R13_Data, R14_Data, R15_Data,
 
-	output wire [31:0] PC_Data, IR_Data, PC_IncData, tempPC,
+	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
 	output wire [31:0] Z_HI_Data, Z_LO_Data,
 	output wire [31:0] MAR_Data, MDR_Data,
@@ -82,12 +82,7 @@ module datapath(
 	register Y (.clk(clk), .clr(clr), .enable(Y_enable), .D(bus_Data), .Q(Y_Data));
 
 	// PC and IR Registers
-	register PC (.clk(clk), .clr(clr), .enable(PC_enable), .D(tempPC), .Q(PC_Data));
-	
-	pc_increment PC_Inc (.PC_Data_IN(PC_Data), .PC_Data_OUT(PC_IncData));
-	
-	assign tempPC = (PC_increment_enable == 1)? PC_IncData : bus_Data;
-	
+	program_counter PC (.clk(clk), .clr(clr), .enable(PC_enable), .incPC(PC_increment_enable), .PC_Input(bus_Data), .PC_Output(PC_Data));
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
 	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D(bus_Data), .Q(MAR_Data));

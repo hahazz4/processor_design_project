@@ -46,7 +46,7 @@ module datapath_and_tb;
 	wire [31:0] R8_Data, R9_Data, R10_Data, R11_Data;
 	wire [31:0] R12_Data, R13_Data, R14_Data, R15_Data;
 
-	wire [31:0] PC_Data, IR_Data, PC_IncData, tempPC;
+	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
 	wire [31:0] Z_HI_Data, Z_LO_Data;
 	wire [31:0] MAR_Data, MDR_Data;
@@ -109,7 +109,7 @@ module datapath_and_tb;
 	.R8_Data(R8_Data), .R9_Data(R9_Data), .R10_Data(R10_Data), .R11_Data(R11_Data),
 	.R12_Data(R12_Data), .R13_Data(R13_Data), .R14_Data(R14_Data), .R15_Data(R15_Data),
 
-	.PC_Data(PC_Data), .IR_Data(IR_Data), .PC_IncData(PC_IncData), .tempPC(tempPC),
+	.PC_Data(PC_Data), .IR_Data(IR_Data),
 	.Y_Data(Y_Data),
 	.Z_HI_Data(Z_HI_Data), .Z_LO_Data(Z_LO_Data),
 	.MAR_Data(MAR_Data), .MDR_Data(MDR_Data),
@@ -118,27 +118,27 @@ module datapath_and_tb;
 	.C_sign_ext_Data(C_sign_ext_Data));
 	
 	// add test logic here
-	initial
-		begin
-			clk = 0;
-			forever #10 clk = ~ clk;
+	always #10 clk = ~clk;
+
+	initial begin
+		clk = 0;
 	end
 
 	always @(posedge clk) // finite state machine; if clk rising-edge
 		begin
 			case (Present_state)
-				Default : Present_state = Reg_load1a;
-				Reg_load1a : Present_state = Reg_load1b;
-				Reg_load1b : Present_state = Reg_load2a;
-				Reg_load2a : Present_state = Reg_load2b;
-				Reg_load2b : Present_state = Reg_load3a;
-				Reg_load3a : Present_state = Reg_load3b;
-				Reg_load3b : Present_state = T0;
-				T0 : Present_state = T1;
-				T1 : Present_state = T2;
-				T2 : Present_state = T3;
-				T3 : Present_state = T4;
-				T4 : Present_state = T5;
+				Default : #40 Present_state = Reg_load1a;
+				Reg_load1a : #40 Present_state = Reg_load1b;
+				Reg_load1b : #40 Present_state = Reg_load2a;
+				Reg_load2a : #40 Present_state = Reg_load2b;
+				Reg_load2b : #40 Present_state = Reg_load3a;
+				Reg_load3a : #40 Present_state = Reg_load3b;
+				Reg_load3b : #40 Present_state = T0;
+				T0 : #40 Present_state = T1;
+				T1 : #40 Present_state = T2;
+				T2 : #40 Present_state = T3;
+				T3 : #40 Present_state = T4;
+				T4 : #40 Present_state = T5;
 			endcase
 		end
 	
@@ -153,70 +153,70 @@ module datapath_and_tb;
 					r1_enable <= 0; r2_enable <= 0; r3_enable <= 0; MDataIN <= 32'h00000000;
 				end
 			
-			Reg_load1a: begin
-				MDataIN <= 32'h00000012;
-				read = 0; MDR_enable = 0; // the first zero is there for completeness
-				#10 read <= 1; MDR_enable <= 1;
-				#15 read <= 0; MDR_enable <= 0;
-			end
- 
-			Reg_load1b: begin
-				#10 MDR_select <= 1; r2_enable <= 1;
-				#15 MDR_select <= 0; r2_enable <= 0; // initialize R2 with the value $12
-			end
-		 
-			Reg_load2a: begin
-				MDataIN <= 32'h00000014;
-				#10 read <= 1; MDR_enable <= 1;
-				#15 read <= 0; MDR_enable <= 0;
-			end
+				Reg_load1a: begin
+					MDataIN <= 32'h00000012;
+					read = 0; MDR_enable = 0; // the first zero is there for completeness
+					#10 read <= 1; MDR_enable <= 1;
+					#15 read <= 0; MDR_enable <= 0;
+				end
+	
+				Reg_load1b: begin
+					#10 MDR_select <= 1; r2_enable <= 1;
+					#15 MDR_select <= 0; r2_enable <= 0; // initialize R2 with the value $12
+				end
 			
-			 Reg_load2b: begin
-				#10 MDR_select <= 1; r3_enable <= 1;
-				#15 MDR_select <= 0; r3_enable <= 0; // initialize R3 with the value $14
-			end
-			
-			Reg_load3a: begin
-				MDataIN <= 32'h00000018;
-				#10 read <= 1; MDR_enable <= 1;
-				#15 read <= 0; MDR_enable <= 0;
-			end
-			
-			 Reg_load3b: begin
-				#10 MDR_select <= 1; r1_enable <= 1;
-				#15 MDR_select <= 0; r1_enable <= 0; // initialize R1 with the value $18
-			end
-			
-			T0: begin // see if you need to de-assert these signals
-				#10 PC_select <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
-				#15 PC_select <= 0; MAR_enable <= 0; PC_increment_enable <= 0; Z_enable <= 0;
-			end
-			
-			T1: begin
-				#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1;
-					MDataIN <= 32'h28918000; // opcode for Ã¢â‚¬Å“alu_instruction R1, R2, R3Ã¢â‚¬Â
-				#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
-			end
-			
-			T2: begin
-				#10 MDR_select <= 1; IR_enable <= 1;
-				#15 MDR_select <= 0; IR_enable <= 0;
-			end
-			
-			T3: begin
-				#10 r2_select <= 1; Y_enable <= 1;
-				#15 r2_select <= 0; Y_enable <= 0;
-			end
-			
-			T4: begin
-				#10 r3_select <= 1; alu_instruction <= 1; Z_enable <= 1;
-				#15 r3_select <= 0; alu_instruction <= 0; Z_enable <= 0;
-			end
-			
-			T5: begin
-				#10 Z_LO_select <= 1; r1_enable <= 1;
-				#15 Z_LO_select <= 0; r1_enable <= 0;
-			end
-		endcase
-	end
+				Reg_load2a: begin
+					MDataIN <= 32'h00000014;
+					#10 read <= 1; MDR_enable <= 1;
+					#15 read <= 0; MDR_enable <= 0;
+				end
+				
+				Reg_load2b: begin
+					#10 MDR_select <= 1; r3_enable <= 1;
+					#15 MDR_select <= 0; r3_enable <= 0; // initialize R3 with the value $14
+				end
+				
+				Reg_load3a: begin
+					MDataIN <= 32'h00000018;
+					#10 read <= 1; MDR_enable <= 1;
+					#15 read <= 0; MDR_enable <= 0;
+				end
+				
+				Reg_load3b: begin
+					#10 MDR_select <= 1; r1_enable <= 1;
+					#15 MDR_select <= 0; r1_enable <= 0; // initialize R1 with the value $18
+				end
+				
+				T0: begin // see if you need to de-assert these signals
+					#10 PC_select <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
+					#15 PC_select <= 0; MAR_enable <= 0; PC_increment_enable <= 0; Z_enable <= 0;
+				end
+				
+				T1: begin
+					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1;
+						MDataIN <= 32'h28918000; // opcode for “and R1, R2, R3"
+					#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
+				end
+				
+				T2: begin
+					#10 MDR_select <= 1; IR_enable <= 1;
+					#15 MDR_select <= 0; IR_enable <= 0;
+				end
+				
+				T3: begin
+					#10 r2_select <= 1; Y_enable <= 1;
+					#15 r2_select <= 0; Y_enable <= 0;
+				end
+				
+				T4: begin
+					#10 r3_select <= 1; alu_instruction <= 1; Z_enable <= 1;
+					#15 r3_select <= 0; alu_instruction <= 0; Z_enable <= 0;
+				end
+				
+				T5: begin
+					#10 Z_LO_select <= 1; r1_enable <= 1;
+					#15 Z_LO_select <= 0; r1_enable <= 0;
+				end
+			endcase
+		end
 endmodule

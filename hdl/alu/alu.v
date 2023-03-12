@@ -13,7 +13,7 @@ module alu (
 
 	// And Operation
    wire [31:0] and_result;
-	logical_and andInstance(A, B, and_result);
+	logical_and andInstance(.A(A), .B(B), .result(and_result));
 	
 	// Or Operation
    wire [31:0] or_result;
