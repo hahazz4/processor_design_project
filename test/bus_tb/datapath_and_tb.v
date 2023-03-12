@@ -199,19 +199,23 @@ module datapath_and_tb;
 			end
 			
 			T2: begin
-				MDR_select <= 1; IR_enable <= 1;
+				#10 MDR_select <= 1; IR_enable <= 1;
+				#15 MDR_select <= 0; IR_enable <= 0;
 			end
 			
 			T3: begin
-				r2_select <= 1; Y_enable <= 1;
+				#10 r2_select <= 1; Y_enable <= 1;
+				#15 r2_select <= 0; Y_enable <= 0;
 			end
 			
 			T4: begin
-				r3_select <= 1; alu_instruction <= 1; Z_enable <= 1;
+				#10 r3_select <= 1; alu_instruction <= 1; Z_enable <= 1;
+				#15 r3_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 			end
 			
 			T5: begin
-				Z_LO_select <= 1; r1_enable <= 1;
+				#10 Z_LO_select <= 1; r1_enable <= 1;
+				#15 Z_LO_select <= 0; r1_enable <= 0;
 			end
 		endcase
 	end
