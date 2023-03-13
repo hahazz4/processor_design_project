@@ -1,3 +1,5 @@
+/* Representation of a PC Incrementor in Verilog HDL. */
+
 module program_counter(
     input wire clk, clr, enable, incPC,
     input wire [31:0] PC_Input,
