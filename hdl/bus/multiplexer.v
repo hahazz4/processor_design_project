@@ -15,31 +15,31 @@ input [31:0] muxIN_InPort, input [31:0] muxIN_C_sign_ext, output reg [31:0] muxO
     /* While loop to check for updates in the select signals, which updates the mux output. */
     always @(*) begin
             case (select_signals_IN)
-                5'b00000: muxOut[31:0] <= muxIN_r0[31:0];
-                5'b00001: muxOut[31:0] <= muxIN_r1[31:0];
-                5'b00010: muxOut[31:0] <= muxIN_r2[31:0];
-                5'b00011: muxOut[31:0] <= muxIN_r3[31:0];
-                5'b00100: muxOut[31:0] <= muxIN_r4[31:0];
-                5'b00101: muxOut[31:0] <= muxIN_r5[31:0];
-                5'b00110: muxOut[31:0] <= muxIN_r6[31:0];
-                5'b00111: muxOut[31:0] <= muxIN_r7[31:0];
-                5'b01000: muxOut[31:0] <= muxIN_r8[31:0];
-                5'b01001: muxOut[31:0] <= muxIN_r9[31:0];
-                5'b01010: muxOut[31:0] <= muxIN_r10[31:0];
-                5'b01011: muxOut[31:0] <= muxIN_r11[31:0];
-                5'b01100: muxOut[31:0] <= muxIN_r12[31:0];
-                5'b01101: muxOut[31:0] <= muxIN_r13[31:0];
-                5'b01110: muxOut[31:0] <= muxIN_r14[31:0];
-                5'b01111: muxOut[31:0] <= muxIN_r15[31:0];
-                5'b10000: muxOut[31:0] <= muxIN_HI[31:0];
-                5'b10001: muxOut[31:0] <= muxIN_LO[31:0];
-                5'b10010: muxOut[31:0] <= muxIN_Z_HI[31:0];
-                5'b10011: muxOut[31:0] <= muxIN_Z_LO[31:0];
-                5'b10100: muxOut[31:0] <= muxIN_PC[31:0];
-                5'b10101: muxOut[31:0] <= muxIN_MDR[31:0];
-                5'b10110: muxOut[31:0] <= muxIN_InPort[31:0];
-                5'b10111: muxOut[31:0] <= muxIN_C_sign_ext[31:0];
-                default: muxOut[31:0] <= 32'd0;
+                5'b00000: muxOut <= muxIN_r0[31:0];
+                5'b00001: muxOut <= muxIN_r1[31:0];
+                5'b00010: muxOut <= muxIN_r2[31:0];
+                5'b00011: muxOut <= muxIN_r3[31:0];
+                5'b00100: muxOut <= muxIN_r4[31:0];
+                5'b00101: muxOut <= muxIN_r5[31:0];
+                5'b00110: muxOut <= muxIN_r6[31:0];
+                5'b00111: muxOut <= muxIN_r7[31:0];
+                5'b01000: muxOut <= muxIN_r8[31:0];
+                5'b01001: muxOut <= muxIN_r9[31:0];
+                5'b01010: muxOut <= muxIN_r10[31:0];
+                5'b01011: muxOut <= muxIN_r11[31:0];
+                5'b01100: muxOut <= muxIN_r12[31:0];
+                5'b01101: muxOut <= muxIN_r13[31:0];
+                5'b01110: muxOut <= muxIN_r14[31:0];
+                5'b01111: muxOut <= muxIN_r15[31:0];
+                5'b10000: muxOut <= muxIN_HI[31:0];
+                5'b10001: muxOut <= muxIN_LO[31:0];
+                5'b10010: muxOut <= muxIN_Z_HI[31:0];
+                5'b10011: muxOut <= muxIN_Z_LO[31:0];
+                5'b10100: muxOut <= muxIN_PC[31:0];
+                5'b10101: muxOut <= muxIN_MDR[31:0];
+                5'b10110: muxOut <= muxIN_InPort[31:0];
+                5'b10111: muxOut <= muxIN_C_sign_ext[31:0];
+                default: muxOut <= 32'd0;
             endcase
         end
 endmodule // Multiplexer end.

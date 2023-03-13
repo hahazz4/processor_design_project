@@ -1,11 +1,11 @@
 
 `timescale 1ns/10ps
-module datapath_and_tb;
+module datapath_add_tb;
 	// CPU signals
 	reg clk;
 	
 	// Register write/enable signals 
-	reg r1_enable, r2_enable, r3_enable; 
+	reg r0_enable, r4_enable, r5_enable; 
 	reg PC_enable, PC_increment_enable, IR_enable; 
 	reg Y_enable, Z_enable; 
 	reg MAR_enable, MDR_enable; 
@@ -14,7 +14,7 @@ module datapath_and_tb;
 	reg read;
 
 	// Encoder Output Select Signals
-	reg r2_select, r3_select; 
+	reg r4_select, r5_select; 
 	reg PC_select;
 	reg Z_HI_select;
 	reg Z_LO_select;
@@ -32,7 +32,7 @@ module datapath_and_tb;
 	wire [31:0] bus_Data; // Data currently in the bus
 	wire [63:0] aluResult;
 	
-	wire [31:0] R1_Data, R2_Data, R3_Data;
+	wire [31:0] R0_Data, R4_Data, R5_Data;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -53,7 +53,7 @@ module datapath_and_tb;
 	.clk(clk), 
 	
 	// Register write/enable signals
-	.r1_enable(r1_enable), .r2_enable(r2_enable), .r3_enable(r3_enable),
+	.r0_enable(r0_enable), .r4_enable(r4_enable), .r5_enable(r5_enable),
 	.PC_enable(PC_enable), .PC_increment_enable(PC_increment_enable), .IR_enable(IR_enable), 
 	.Y_enable(Y_enable), .Z_enable(Z_enable), 
 	.MAR_enable(MAR_enable), .MDR_enable(MDR_enable), 
@@ -62,7 +62,7 @@ module datapath_and_tb;
 	.read(read),
 
 	// Encoder Output Select Signals
-	.r2_select(r2_select), .r3_select(r3_select), 
+	.r4_select(r4_select), .r5_select(r5_select), 
 	.PC_select(PC_select),
 	.Z_HI_select(Z_HI_select), .Z_LO_select(Z_LO_select), 
 	.MDR_select(MDR_select),
@@ -79,7 +79,7 @@ module datapath_and_tb;
 	.bus_Data(bus_Data), // Data currently in the bus
 	.aluResult(aluResult),
 	
-	.R1_Data(R1_Data), .R2_Data(R2_Data), .R3_Data(R3_Data),
+	.R0_Data(R0_Data), .R4_Data(R4_Data), .R5_Data(R5_Data),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
 	.Y_Data(Y_Data),
@@ -116,10 +116,10 @@ module datapath_and_tb;
 			case (Present_state) // assert the required signals in each clk cycle
 				Default: begin
 				 	PC_select <= 0; Z_LO_select <= 0; MDR_select <= 0; // initialize the signals
-					r2_select <= 0; r3_select <= 0; MAR_enable <= 0; Z_enable <= 0;
+					r4_select <= 0; r5_select <= 0; MAR_enable <= 0; Z_enable <= 0;
 					PC_enable <=0; MDR_enable <= 0; IR_enable <= 0; Y_enable <= 0;
 					PC_increment_enable <= 0; read <= 0; alu_instruction <= 0;
-					r1_enable <= 0; r2_enable <= 0; r3_enable <= 0; MDataIN <= 32'h00000000;
+					r0_enable <= 0; r4_enable <= 0; r5_enable <= 0; MDataIN <= 32'h00000000;
 				end
 			
 				Reg_load1a: begin
@@ -130,8 +130,8 @@ module datapath_and_tb;
 				end
 	
 				Reg_load1b: begin
-					#10 MDR_select <= 1; r2_enable <= 1;
-					#15 MDR_select <= 0; r2_enable <= 0; // initialize R2 with the value $12
+					#10 MDR_select <= 1; r4_enable <= 1;
+					#15 MDR_select <= 0; r4_enable <= 0; // initialize R2 with the value $12
 				end
 			
 				Reg_load2a: begin
@@ -141,8 +141,8 @@ module datapath_and_tb;
 				end
 				
 				Reg_load2b: begin
-					#10 MDR_select <= 1; r3_enable <= 1;
-					#15 MDR_select <= 0; r3_enable <= 0; // initialize R3 with the value $14
+					#10 MDR_select <= 1; r5_enable <= 1;
+					#15 MDR_select <= 0; r5_enable <= 0; // initialize R3 with the value $14
 				end
 				
 				Reg_load3a: begin
@@ -152,8 +152,8 @@ module datapath_and_tb;
 				end
 				
 				Reg_load3b: begin
-					#10 MDR_select <= 1; r1_enable <= 1;
-					#15 MDR_select <= 0; r1_enable <= 0; // initialize R1 with the value $18
+					#10 MDR_select <= 1; r0_enable <= 1;
+					#15 MDR_select <= 0; r0_enable <= 0; // initialize R1 with the value $18
 				end
 				
 				T0: begin // see if you need to de-assert these signals
@@ -162,8 +162,8 @@ module datapath_and_tb;
 				end
 				
 				T1: begin
-					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 32'h28918000; // opcode for “AND R1, R2, R3"
-					#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
+					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 32'h18228000; // opcode for "add R0, R4, R5"
+					#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0; 	 
 				end
 				
 				T2: begin
@@ -172,18 +172,18 @@ module datapath_and_tb;
 				end
 				
 				T3: begin
-					#10 r2_select <= 1; Y_enable <= 1;
-					#15 r2_select <= 0; Y_enable <= 0;
+					#10 r4_select <= 1; Y_enable <= 1;
+					#15 r4_select <= 0; Y_enable <= 0;
 				end
 				
 				T4: begin
-					#10 r3_select <= 1; alu_instruction <= 5'b00101; Z_enable <= 1;
-					#15 r3_select <= 0; alu_instruction <= 0; Z_enable <= 0;
+					#10 r5_select <= 1; alu_instruction <= 5'b00011; Z_enable <= 1;
+					#15 r5_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 				
 				T5: begin
-					#10 Z_LO_select <= 1; r1_enable <= 1;
-					#15 Z_LO_select <= 0; r1_enable <= 0;
+					#10 Z_LO_select <= 1; r0_enable <= 1;
+					#15 Z_LO_select <= 0; r0_enable <= 0;
 				end
 			endcase
 		end

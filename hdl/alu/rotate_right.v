@@ -10,9 +10,9 @@ module rotate_right (
     // Shift Instance Outputs
     wire [31:0] shiftOneResult, shiftTwoResult;
     
-    // Right Shift Instances
-    shift_right rightShiftOne(A, (32 - B), shiftOneResult);     // Shifts right (32 - B) times
-    shift_right rightShiftTwo(A, B, shiftTwoResult);            // Shifts right B times
+    // Shift Instances
+    shift_left leftShift(A, (32 - B), shiftOneResult);     // Shifts right (32 - B) times
+    shift_right rightShift(A, B, shiftTwoResult);            // Shifts right B times
     
     // OR Operation Instance
     logical_or orInstance(shiftOneResult, shiftTwoResult, result);      // Performs the OR operation and produces the final result

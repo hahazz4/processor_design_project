@@ -1,6 +1,6 @@
 
 `timescale 1ns/10ps
-module datapath_and_tb;
+module datapath_or_tb;
 	// CPU signals
 	reg clk;
 	
@@ -162,7 +162,7 @@ module datapath_and_tb;
 				end
 				
 				T1: begin
-					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 32'h28918000; // opcode for “AND R1, R2, R3"
+					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 32'h30918000; // opcode for “OR R1, R2, R3"
 					#15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0;			 
 				end
 				
@@ -177,7 +177,7 @@ module datapath_and_tb;
 				end
 				
 				T4: begin
-					#10 r3_select <= 1; alu_instruction <= 5'b00101; Z_enable <= 1;
+					#10 r3_select <= 1; alu_instruction <= 5'b00110; Z_enable <= 1;
 					#15 r3_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 				

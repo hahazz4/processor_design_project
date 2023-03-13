@@ -59,11 +59,11 @@ module alu (
 
    // Negate Operation
    wire [31:0] negate_result;
-   negate negateInstance(A, negate_result);
+   negate negateInstance(B, negate_result);
 
    // Not Operation
    wire [31:0] not_result;
-   logical_not notInstance(A, not_result);
+   logical_not notInstance(B, not_result);
 
    // Select operation
    always @(*) begin

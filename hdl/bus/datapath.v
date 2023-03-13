@@ -1,6 +1,5 @@
 /* Representation of the datapath in Verilog HDL. */
 /* Connected outputs of encoder to select signals in multiplexer. */
-
 module datapath(
 	// CPU signals
 	input wire clk, 
@@ -53,8 +52,7 @@ module datapath(
 	output wire [31:0] MAR_Data, MDR_Data,
 	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] InPort_Data,
-	output wire [31:0] C_sign_ext_Data
-);
+	output wire [31:0] C_sign_ext_Data);
 
 	// General purpose registers r0-r15
 	register r0 (.clk(clk), .clr(clr), .enable(r0_enable), .D(bus_Data), .Q(R0_Data)); 
@@ -86,7 +84,7 @@ module datapath(
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
 	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D(bus_Data), .Q(MAR_Data));
-	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .select(read), .D1(bus_Data), .D2(MDataIN), .Q(MDR_Data));
+	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .select(read), .D1(MDataIN), .D2(bus_Data), .Q(MDR_Data));
 
 	// Encoder Instance
     encoder encoder_instance(.encodeIN_r0(r0_select), .encodeIN_r1(r1_select), .encodeIN_r2(r2_select), 
@@ -106,6 +104,6 @@ module datapath(
     .muxIN_LO(LO_Data), .muxIN_Z_HI(Z_HI_Data), .muxIN_Z_LO(Z_LO_Data), .muxIN_PC(PC_Data), 
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 	 
-	 alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
+	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
 
 endmodule // Datapath end.
