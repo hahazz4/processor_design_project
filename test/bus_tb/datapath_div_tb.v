@@ -127,7 +127,7 @@ module datapath_div_tb;
 				end
 			
 				Reg_load1a: begin
-					MDataIN <= 32'h00000012;
+					MDataIN <= 32'h00000008;
 					read = 0; MDR_enable = 0; // the first zero is there for completeness
 					#10 read <= 1; MDR_enable <= 1;
 					#15 read <= 0; MDR_enable <= 0;
@@ -139,7 +139,7 @@ module datapath_div_tb;
 				end
 			
 				Reg_load2a: begin
-					MDataIN <= 32'h00000014;
+					MDataIN <= 32'h00000003;
 					#10 read <= 1; MDR_enable <= 1;
 					#15 read <= 0; MDR_enable <= 0;
 				end

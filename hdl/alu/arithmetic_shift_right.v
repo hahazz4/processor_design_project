@@ -7,8 +7,8 @@ module arithmetic_shift_right (
     
     // Arithemetic Shift Right Output
     output wire [31:0] result);
-    
+	 
     // Shifted result assigned to output signal 'result'
-    assign result = A >>> B;         
+    assign result = $signed(A) >>> B;         
 
 endmodule // arithmetic_shift_right end.

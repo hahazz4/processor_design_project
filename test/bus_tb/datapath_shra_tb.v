@@ -123,7 +123,7 @@ module datapath_shra_tb;
 				end
 			
 				Reg_load1a: begin
-					MDataIN <= 32'h00000012;
+					MDataIN <= 32'hFFFFFFFA;
 					read = 0; MDR_enable = 0; // the first zero is there for completeness
 					#10 read <= 1; MDR_enable <= 1;
 					#15 read <= 0; MDR_enable <= 0;
@@ -135,7 +135,7 @@ module datapath_shra_tb;
 				end
 			
 				Reg_load2a: begin
-					MDataIN <= 32'h00000014;
+					MDataIN <= 32'h00000002;
 					#10 read <= 1; MDR_enable <= 1;
 					#15 read <= 0; MDR_enable <= 0;
 				end

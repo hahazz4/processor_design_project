@@ -10,7 +10,7 @@ module rotate_left (
     // Shift Instance Outputs
     wire [31:0] shiftOneResult, shiftTwoResult;
 
-    // Left Shift Instances
+    // Shift Instances
     shift_left leftShiftOne(A, B, shiftOneResult);              // Shifts left B times
     shift_right rightShiftTwo(A, (32 - B), shiftTwoResult);       // Shifts left (32 - B) times
 
