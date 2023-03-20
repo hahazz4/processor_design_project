@@ -16,7 +16,7 @@ module datapath(
 	input wire HI_enable, LO_enable,
 
 	// Memory Data Multiplexer Read/Select Signal
-	input wire read,
+	input wire read, write,
 
 	// Encoder Output Select Signals
 	input wire r0_select, r1_select, r2_select, r3_select, 
@@ -49,7 +49,8 @@ module datapath(
 	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
 	output wire [31:0] Z_HI_Data, Z_LO_Data,
-	output wire [31:0] MAR_Data, MDR_Data,
+	output wire [8:0] MAR_Data,
+	output wire [31:0] MDR_Data,
 	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] InPort_Data,
 	output wire [31:0] C_sign_ext_Data);
@@ -83,9 +84,6 @@ module datapath(
 	program_counter PC (.clk(clk), .clr(clr), .enable(PC_enable), .incPC(PC_increment_enable), .PC_Input(bus_Data), .PC_Output(PC_Data));
 	register IR (.clk(clk), .clr(clr), .enable(IR_enable), .D(bus_Data), .Q(IR_Data));
 
-	register MAR (.clk(clk), .clr(clr), .enable(MAR_enable), .D(bus_Data), .Q(MAR_Data));
-	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .select(read), .D1(MDataIN), .D2(bus_Data), .Q(MDR_Data));
-
 	// Encoder Instance
     encoder encoder_instance(.encodeIN_r0(r0_select), .encodeIN_r1(r1_select), .encodeIN_r2(r2_select), 
     .encodeIN_r3(r3_select), .encodeIN_r4(r4_select), .encodeIN_r5(r5_select), .encodeIN_r6(r6_select), 
@@ -105,5 +103,7 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 	 
 	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
+
+	memory_datapath memory_datapath_Instance(clk, clr, MAR_enable, MDR_enable, read, write, MDataIN, bus_Data, MAR_Data, MDR_Data);
 
 endmodule // Datapath end.
