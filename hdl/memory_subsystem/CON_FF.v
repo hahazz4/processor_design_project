@@ -1,15 +1,16 @@
-/* This module determines whether the correct condtion has been met to cause branching to take place in a conditional branch instruction. */
+/* This module determines whether the correct condition has been met to cause branching to take place in a conditional branch instruction. */
 module CON_FF(
     input [31:0] bus_in, ir, 
     input con_in_signal,
-    output con_out);                           //c2 is located at bits 22:19 of the ir register
-    
-    reg [3:0] decoder_out;
-    reg con_D, reg_1, reg_2, reg_3, reg_4, reg_5; 
+    output con_out
+);                                                
+
+    wire [3:0] decoder_out;
+    wire eq, not_eq, pos, neg, branch_flag;
     
     always @(*)
     begin
-        case(ir[1:0])
+        case((ir[1:0]))                                                 //2 to 4 decoder
             2'b00 : begin
                 decoder_out = 4'b0001;
             end
@@ -28,36 +29,11 @@ module CON_FF(
         endcase
     end
     
-    always @(con_in_signal && bus_in)
-    begin
-        if((decoder_out[0] and bus_in) == 0)        //If the decoder_out[0] AND bus_in is equal to 0, then D = 1;
-        begin
-            res_1 = 1;  
-        end
-
-        else if((decoder_out[1] and bus_in) != 0)   //If the decoder_out[1] AND bus_in is not equal to 0, then D = 1;
-        begin
-            res_2 = 1;  
-        end
-
-        else if((decoder_out[2] and bus_in) >= 0)   //If the decoder_out[2] AND bus_in greater than equal to 0, then D = 1;
-        begin
-            res_3 = 1;  
-        end
-
-        else if((decoder_out[3] and bus_in[31]))    //If the decoder_out[3] AND bus_in is equal to 1, then D = 1;
-        begin
-            res_4 = 1;  
-        end
-
-        else                                        //If the decoder_out AND bus_in is less than equal to 0, then D = 0;
-        begin
-            res_5 = 0;  
-        end
-    end
+    assign eq = (bus_in == 32'd0) ? 1'b1 : 1'b0;
+    assign not_eq = (bus_in != 32'd0) ? 1'b1 : 1'b0;
+    assign pos = (bus_in[31] == 0) ? 1'b1 : 1'b0;
+    assign neg = (bus_in[31] == 1) ? 1'b1 : 1'b0;
     
-    con_D = (res_1 or res_2 or res_3 or res_4);     //Or all the and results obtained.
-
-    assign con_out = con_D;                         //Assigning the value of con_D to the output wire con_out.
-
+    assign branch_flag = (decoder_out[0] and eq or decoder_out[1] and not_eq or decoder_out[2] and pos or decoder_out[3] and neg);                                             //Assigning the value of con_D to the output wire con_out.
+    flip_flop_logic ffl(.clk(con_in_signal), .d(branch_flag), .q(con_out));
 endmodule
