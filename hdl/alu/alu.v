@@ -1,7 +1,9 @@
 module alu (
 	// ALU Inputs
-	input wire [31:0] A, B, 
+	input wire [31:0] A, B, Y,    //added Y
    input wire [4:0] opcode,
+
+   input br_flag;                //added branch flag
 
 	// ALU Output
 	output reg [63:0] result); 
@@ -20,6 +22,23 @@ module alu (
    right_rotate_op = 5'b01010, 
    negate_op = 5'b10001, 
    not_op = 5'b10010;
+   ldw_op = 5'b00000;
+   ldi_op = 5'b00001;
+   stw_op = 5'b00010;
+   addi_op = 5'b01011;
+   andi_op = 5'b01100;
+   ori_op = 5'b01101;
+   br_op = 5'b10010;
+   // brzr_op = 5'b;
+   // brnz_op = 5'b;
+   // brmi_op = 5'b;
+   // brpl_op = 5'b;
+   jr_op = 5'b10011;
+   jal_op = 5'b10100;
+   mfhi_op = 5'b10111;
+   mflo_op = 5'b11000;
+   out = 5'b10110;
+   in = 5'b10101;
 
 	// And Operation
    wire [31:0] and_result;
@@ -154,7 +173,28 @@ module alu (
             result[31:0] <= not_result[31:0];
             result[63:32] <= 32'd0;
 			end
-				
+
+         // Load, load immediate, store, add immediate Operations
+         ldw, ldi, stw, addi : begin
+            result[31:0] <= sum_result[31:0];
+            result[63:32] <= 32'd0;
+			end
+
+         // Branch Operation
+         br_op : begin
+            if(br_flag)
+            begin
+               result[31:0] <= sum_result[31:0];
+               result[63:32] <= 32'd0;
+            end
+
+            else
+            begin
+               result[31:0] <= Y[31:0];
+               result[63:32] <= 32'd0;
+            end
+         end
+
 			// Default Case
 			default : begin
 				result[63:0] <= 64'd0;
