@@ -28,17 +28,17 @@ module alu (
    addi_op = 5'b01100;
    andi_op = 5'b01100;
    ori_op = 5'b01110;
-   br_op = 5'b10010;
-   // brzr_op = 5'b;
-   // brnz_op = 5'b;
-   // brmi_op = 5'b;
-   // brpl_op = 5'b;
-   jr_op = 5'b10011;
-   jal_op = 5'b10100;
-   mfhi_op = 5'b10111;
-   mflo_op = 5'b11000;
-   out = 5'b10110;
-   in = 5'b10101;
+   br_op = 5'b10011;
+   // brzr_op = 5'b10011;
+   // brnz_op = 5'b10011;
+   // brmi_op = 5'b10011;
+   // brpl_op = 5'b10011;
+   jr_op = 5'b10100;
+   jal_op = 5'b10101;
+   mfhi_op = 5'b11000;
+   mflo_op = 5'b11001;
+   out = 5'b10111;
+   in = 5'b10110;
 
 	// And Operation
    wire [31:0] and_result;
@@ -175,7 +175,7 @@ module alu (
 			end
 
          // Load, load immediate, store, add immediate Operations
-         ldw, ldi, stw, addi : begin
+         ldw_op, ldi_op, stw_op, addi_op : begin
             result[31:0] <= sum_result[31:0];
             result[63:32] <= 32'd0;
 			end
