@@ -8,7 +8,7 @@ module memory_datapath(
     output reg [31:0] MDR_Data);
 
     reg [31:0] mdrOut;
-    reg [31:0] marOut;
+    reg [8:0] marOut;
 
     md_register mdr(clk, clr, MDR_enable, read, MDataIN, bus_Data, mdrOut);
     mar_register mar(clk, clr, MAR_enable, bus_Data, marOut);

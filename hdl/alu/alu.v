@@ -25,9 +25,9 @@ module alu (
    ldw_op = 5'b00000;
    ldi_op = 5'b00001;
    stw_op = 5'b00010;
-   addi_op = 5'b01011;
+   addi_op = 5'b01100;
    andi_op = 5'b01100;
-   ori_op = 5'b01101;
+   ori_op = 5'b01110;
    br_op = 5'b10010;
    // brzr_op = 5'b;
    // brnz_op = 5'b;
