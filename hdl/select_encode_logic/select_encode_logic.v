@@ -1,4 +1,4 @@
-module select_encode(
+module select_encode_logic(
     input [31:0] ir,
     input Gra, Grb, Grc, r_enable, r_out, ba_out,   //External inputs
     output [31:0] c_sign);
@@ -14,24 +14,24 @@ module select_encode(
 
     if(Gra)                 //if the General register a control signal is 1, then decoder input would be register a AND Gra.
     begin
-        decoder_in_a = (ra and {4{Gra}});
+        decoder_in_a = (ra & {4{Gra}});
     end
 
     else if(Grb)            //if the General register b control signal is 1, then decoder input would be register b AND Grb.
     begin
-        decoder_in_b = (rb and {4{Grb}});
+        decoder_in_b = (rb & {4{Grb}});
     end
 
     else if(Grc)            //if the General register c control signal is 1, then decoder input would be register c AND Grc.
     begin
-        decoder_in_c = (rc and {4{Grc}});
+        decoder_in_c = (rc & {4{Grc}});
     end
 
-    assign decoder_in = (decoder_in_a or decoder_in_b or decoder_in_c);     //Or's all the decoder_inputs for register a, b, c and stores the result in decoder_in.
+    assign decoder_in = (decoder_in_a | decoder_in_b | decoder_in_c);     //Or's all the decoder_inputs for register a, b, c and stores the result in decoder_in.
 
-    decode_4_to_16 decode(decoder_in, decoder_out);                         //Calling the 4-to-16 decoder and passing in the parameters, decoder_in and decoder_out.
+    decoder decoderInstance(decoder_in, decoder_out);                       //Calling the 4-to-16 decoder and passing in the parameters, decoder_in and decoder_out.
 
-    assign r_enable = {16{r_enable}} and decoder_out;
-    assign r_out = ({16{ba_out[15:0]}} or {16{r_out}}) and decoder_out;
+    assign r_enable = {16{r_enable}} & decoder_out;
+    assign r_out = ({16{ba_out[15:0]}} | {16{r_out}}) & decoder_out;
 endmodule
 

@@ -6,10 +6,20 @@ module alu (
 	// ALU Output
 	output reg [63:0] result); 
    
-   parameter and_op = 5'b00101, or_op = 5'b00110, addition_op = 5'b00011, 
-   subtraction_op = 5'b00100, multiplication_op = 5'b01111, division_op = 5'b10000, 
-   left_shift_op = 5'b01001, right_shift_op = 5'b00111, arith_shift_right_op = 5'b01000, 
-   left_rotate_op = 5'b01011, right_rotate_op = 5'b01010, negate_op = 5'b10001, not_op = 5'b10010;
+   parameter 
+   and_op = 5'b00101, 
+   or_op = 5'b00110, 
+   addition_op = 5'b00011, 
+   subtraction_op = 5'b00100, 
+   multiplication_op = 5'b01111, 
+   division_op = 5'b10000, 
+   left_shift_op = 5'b01001, 
+   right_shift_op = 5'b00111, 
+   arith_shift_right_op = 5'b01000, 
+   left_rotate_op = 5'b01011, 
+   right_rotate_op = 5'b01010, 
+   negate_op = 5'b10001, 
+   not_op = 5'b10010;
 
 	// And Operation
    wire [31:0] and_result;

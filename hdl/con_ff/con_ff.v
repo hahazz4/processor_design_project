@@ -1,5 +1,5 @@
 /* This module determines whether the correct condition has been met to cause branching to take place in a conditional branch instruction. */
-module CON_FF(
+module con_ff(
     input [31:0] bus_in, ir, 
     input con_in_signal,
     output con_out
@@ -35,5 +35,5 @@ module CON_FF(
     assign neg = (bus_in[31] == 1) ? 1'b1 : 1'b0;
     
     assign branch_flag = (decoder_out[0] and eq or decoder_out[1] and not_eq or decoder_out[2] and pos or decoder_out[3] and neg);                                             //Assigning the value of con_D to the output wire con_out.
-    flip_flop_logic ffl(.clk(con_in_signal), .d(branch_flag), .q(con_out));
+    ff_logic ff_logicInstance(.clk(con_in_signal), .d(branch_flag), .q(con_out));
 endmodule

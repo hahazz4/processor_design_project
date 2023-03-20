@@ -1,4 +1,4 @@
-module flip_flop_logic(input wire clk, input wire d, output reg q, output reg not_q);
+module ff_logic(input wire clk, input wire d, output reg q, output reg not_q);
     initial begin
 	    q <= 0;
 	    not_q <= 1;
