@@ -1,5 +1,5 @@
 /* This module is a 4 to 16 decoder, which takes 4 bits input and produces a 16 bits output. */
-module decoder(input [3:0] decoder_in, output [15:0] decoder_out);
+module SE_decoder(input [3:0] decoder_in, output [15:0] decoder_out);
     
     case(decoder_in)
             4'b0000 : begin
@@ -70,4 +70,5 @@ module decoder(input [3:0] decoder_in, output [15:0] decoder_out);
                 decoder_out = 16'b0000000000000000;
             end
         endcase
+        
 endmodule

@@ -1,6 +1,6 @@
 
 `timescale 1ns/10ps
-module memory_datapath_ld_tb;
+module load_tb;
 	// CPU signals
 	reg clk;
 	
@@ -11,7 +11,9 @@ module memory_datapath_ld_tb;
 	reg MAR_enable, MDR_enable; 
 
 	// Memory Data Multiplexer Read/Select Signal
-	reg read;
+	reg read, write;
+
+	reg Gra, Grb, Grc, Rin, Rout, BAout;
 
 	// Encoder Output Select Signals
 	reg r4_select, r5_select; 
@@ -19,6 +21,7 @@ module memory_datapath_ld_tb;
 	reg Z_HI_select;
 	reg Z_LO_select;
 	reg MDR_select;
+	reg c_select;
 	
 	wire [4:0] encode_sel_signal;
 	
@@ -119,12 +122,12 @@ module memory_datapath_ld_tb;
 				end
 			
 				T0: begin // see if you need to de-assert these signals
-					PC_select <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
+					#10 PC_select <= 1; MAR_enable <= 1; PC_increment_enable <= 1; Z_enable <= 1;
 			        #15 PCout <= 0; MAR_enable <= 0; PC_increment_enable <= 0; Z_enable <= 0;
 				end
 				
 				T1: begin
-					Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 1;
+					#10 Z_LO_select <= 1; PC_enable <= 1; read <= 1; MDR_enable <= 1; MDataIN <= 32'h00000000;
 			        #15 Z_LO_select <= 0; PC_enable <= 0; read <= 0; MDR_enable <= 0; MDataIN <= 0;
 				end
 				

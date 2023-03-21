@@ -1,4 +1,4 @@
-module out_port(
+module outport(
     input clr, clk, enable,
     input wire [31:0] busmux_out,
     output wire [31:0] out_port);

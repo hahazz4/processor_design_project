@@ -10,13 +10,20 @@ module datapath(
 	input wire r4_enable, r5_enable, r6_enable, r7_enable, 
 	input wire r8_enable, r9_enable, r10_enable, r11_enable, 
 	input wire r12_enable, r13_enable, r14_enable, r15_enable, 
-	input wire PC_enable, PC_increment_enable, IR_enable, 
+	input wire PC_enable, PC_increment_enable, IR_enable,
+	input wire con_enable, 
 	input wire Y_enable, Z_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
 
 	// Memory Data Multiplexer Read/Select Signal
 	input wire read, write,
+
+	// Select and Encode Logic Inputs
+	input wire Gra, Grb, Grc, r_enable, r_select, BAout,
+
+	// CON FF Module
+	input wire con_output,
 
 	// Encoder Output Select Signals
 	input wire r0_select, r1_select, r2_select, r3_select, 
@@ -56,7 +63,7 @@ module datapath(
 	output wire [31:0] C_sign_ext_Data);
 
 	// General purpose registers r0-r15
-	register r0 (.clk(clk), .clr(clr), .enable(r0_enable), .D(bus_Data), .Q(R0_Data)); 
+	R0_revised r0 (.clk(clk), .clr(clr), .enable(r0_enable), .BAout(BAout), .D(bus_Data), .Q(R0_Data)); 
 	register r1 (.clk(clk), .clr(clr), .enable(r1_enable), .D(bus_Data), .Q(R1_Data)); 
 	register r2 (.clk(clk), .clr(clr), .enable(r2_enable), .D(bus_Data), .Q(R2_Data));
 	register r3 (.clk(clk), .clr(clr), .enable(r3_enable), .D(bus_Data), .Q(R3_Data));
@@ -104,6 +111,12 @@ module datapath(
 	 
 	alu alu_instance(.A(Y_Data), .B(bus_Data), .opcode(alu_instruction), .result(aluResult));
 
-	memory_datapath memory_datapath_Instance(clk, clr, MAR_enable, MDR_enable, read, write, MDataIN, bus_Data, MAR_Data, MDR_Data);
+	memory_datapath memory_datapath_Instance(.clk(clk), .clr(clr), .MAR_enable(MAR_enable), .MDR_enable(MDR_enable), 
+	.read(read), .write(write), .MDataIN(MDataIN), .bus_Data(bus_Data), .MAR_Data(MAR_Data), .MDR_Data(MDR_Data));
 
+	select_encode_logic selInstance(.instruction(IR_Data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .r_enable(r_enable), .r_select(r_select), 
+	.BAout(BAout), .register_enable(r_enable), .register_select(r_select), .C_sign_ext_Data(C_sign_ext_Data));
+
+	con_ff conInstance(.bus_Data(bus_Data), .instruction(IR_Data), .con_enable(con_enable), .con_output(con_output));
+	
 endmodule // Datapath end.

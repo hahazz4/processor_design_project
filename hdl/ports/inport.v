@@ -1,4 +1,4 @@
-module in_port(
+module inport(
     input clr, clk,
     input wire [31:0] input_data,
     output wire [31:0] busmux_in);

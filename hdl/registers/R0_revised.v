@@ -1,7 +1,7 @@
 /* Representation of a register in Verilog HDL. */
 /* Declared 3, 1-bit signals, 1, 32-bit D-input, and 1, 32-bit Q-output. */
 /* Data type of each signal/input is a wire and output is a reg. */
-module revised_register_R0(input clk, input clr, input enable, input BAout, input [31:0] D, output reg [31:0] Q);
+module R0_revised(input clk, input clr, input enable, input BAout, input [31:0] D, output reg [31:0] Q);
 
     wire notBAout;
     wire [31:0] registerOutput;
