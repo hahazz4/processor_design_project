@@ -1,11 +1,11 @@
 `timescale 1ns/10ps
 module control_unit(
+    input [31:0] instruction_reg,
+    input clk, reset, stop, …, con_ff,
     output reg Gra, Grb, Grc, R_enable, …, R_select, // define the inputs and outputs to your Control Unit
     Y_enable, Z_enable, PC_select, PC_increment_enable, …, MAR_enable,
     read, write, …, clr,
-    ADD, AND, …, SHR,
-    input [31:0] instruction_reg,
-    input clk, reset, stop, …, con_ff);
+    ADD, AND, …, SHR,);
 
 parameter Reset_state= 8'b00000000, fetch0 = 8'b00000001, fetch1 = 8'b00000010, fetch2= 8'b00000011,
           add3 = 8'b00000100, add4= 8'b00000101, add5= 8'b00000110, sub3 = 8'b00000111, sub4 = 8'b00001000, sub5 = 8'b00001001,
@@ -57,7 +57,7 @@ parameter Reset_state= 8'b00000000, fetch0 = 8'b00000001, fetch1 = 8'b00000010, 
 
 reg [7:0] present_state = reset_state;      // adjust the bit pattern based on the number of states
 
-always @(posedge clk, resetgestopet)  con_ff finite state machine; if clock or reset rising-edge
+always @(posedge clk, posedge reset, posedge stop)  //con_ff finite state machine; if clk or reset rising-edge
 begin
     if (Reset == 1'b1) present_state = reset_state;
     else case (present_state)
@@ -199,10 +199,10 @@ always @(present_state) // do the job for each state
 begin
     case (present_state) // assert the requinstruction_reged signals in each state
     reset_state: begin
-        Gra <= 0; Grb <= 0; Grc <= 0; Y_enable <= 0; PC_select<= 0; ZHighout<=0; ZLowout<=0; MDR_select<=0; 
-        MAR_enable <=0; PC_enable <=0; MDR_enable <=0; instruction_reg_enable <=0; Y_enable <=0; PC_increment_enable <=0; MDR_read <=0;
-		HIin <=0; LOin <=0; HIout <=0; LOout <=0; ZHighIn <=0; ZLowIn <=0; Cout <=0; RAM_write <=0; R_enable <=0;
-        R_select <=0; BAout <=0; CON_enable <=0; enableInputPort <=0; OutPort_enable <=0; InPortout <=0;
+        Gra <= 0; Grb <= 0; Grc <= 0; Y_enable <= 0; PC_select <= 0; ZHighout <= 0; ZLowout <= 0; MDR_select <= 0; 
+        MAR_enable <= 0; PC_enable <= 0; MDR_enable <= 0; instruction_reg_enable <= 0; Y_enable <= 0; PC_increment_enable <= 0; MDR_read <= 0;
+		HIin <= 0; LOin <= 0; HIout <= 0; LOout <= 0; ZHighIn <= 0; ZLowIn <= 0; Cout <= 0; RAM_write <= 0; R_enable <= 0;
+        R_select <= 0; BAout <= 0; CON_enable <= 0; enableInputPort <= 0; OutPort_enable <= 0; InPortout <= 0;
     end
     
     fetch0: begin
@@ -211,14 +211,14 @@ begin
         PC_increment_enable <= 1;
         Z_enable <= 0;
     end
- 
+
 	fetch1: begin
-		PCout <= 0; MAR_enable <= 0; 
+		PC_select <= 0; MAR_enable <= 0; 
 		MDR_enable <= 1; MDR_read <= 1; ZLowout <= 1;
 	end
-         
+
 	fetch2: begin
-		MDR_enable <= 0; MDR_read<=0; ZLowout <= 0;
+		MDR_enable <= 0; MDR_read <= 0; ZLowout <= 0;
 		MDR_select <= 1; instruction_reg_enable <= 1; PC_enable <= 1; PC_increment_enable <= 1;	
 		#21 PC_enable <= 0;
 	end 
@@ -228,262 +228,269 @@ begin
 		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;
 		Grb <= 1; R_select <= 1; Y_enable <= 1;
 	end
+
 	add4, sub4: begin
 		Grb <= 0; R_select <= 0; Y_enable <= 0;
-		Grc<=1; R_select <= 1; ZHighIn <= 1;  ZLowIn <= 1; 
+		Grc <= 1; R_select <= 1; ZHighIn <= 1; ZLowIn <= 1; 
 	end
+
 	add5, sub5: begin
-		Grc <=0; R_select <= 0; ZHighIn <= 0;  ZLowIn <= 0;
-		ZLowout <= 1; Gra<=1; R_enable<=1;
+		Grc <= 0; R_select <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
 	end
 
 	//Or, And, Shift-Left, Shift-Right, Rotate-Left, Rotate-Right Operations
 	or3, and3, shl3, shr3, rol3, ror3: begin	
-		MDR_select <= 0; instruction_reg_enable <= 0;PC_enable <= 0; PC_increment_enable <= 0;
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;
 		Grb <= 1; R_select <= 1; Y_enable <= 1;
 	end
 	
     or4, and4, shl4, shr4, rol4, ror4: begin
-			Grb <= 0; R_select <= 0; Y_enable <= 0;
-			Grc<=1; R_select <= 1; ZHighIn <= 1;  ZLowIn <= 1;
-		end
-		or5, and5, shl5, shr5, rol5, ror5: begin
-			Grc<=0; R_select <= 0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1; Gra <= 1; R_enable <= 1;
-			#40 ZLowout <= 0; Gra <= 1; R_select <= 1; R_enable <= 0;
-		end
+		Grb <= 0; R_select <= 0; Y_enable <= 0;
+		Grc <= 1; R_select <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
+	
+    or5, and5, shl5, shr5, rol5, ror5: begin
+		Grc <= 0; R_select <= 0; ZHighIn <= 0;  ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
+		#40 ZLowout <= 0; Gra <= 1; R_select <= 1; R_enable <= 0;
+	end
 		
-        //Multiplication, Division Operations
-		mul3, div3: begin	
-			MDR_select <= 0; instruction_reg_enable <= 0;PC_enable <= 0; PC_increment_enable <= 0;
-			Grb <= 1; R_select <= 1; Y_enable <= 1;  
-			
-		end
-		mul4, div4: begin
-			Grb <= 0; R_select <= 0; Y_enable <= 0;
-			Grc<=1; R_select <= 1;ZHighIn <= 1;  ZLowIn <= 1;
-				
-		end
-		mul5, div5: begin
-			Grb<=0;R_select<=0;ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout<=1; LOin <= 1;
-				
-		end
-		mul6, div6: begin
-			ZLowout<= 0; LOin <= 0;
-			ZHighout<= 1; HIin <= 1; 
-		end
+    //Multiplication, Division Operations
+	mul3, div3: begin	
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;
+		Grb <= 1; R_select <= 1; Y_enable <= 1;  		
+	end
+	
+    mul4, div4: begin
+		Grb <= 0; R_select <= 0; Y_enable <= 0;
+		Grc <= 1; R_select <= 1; ZHighIn <= 1; ZLowIn <= 1;			
+	end
+	
+    mul5, div5: begin
+		Grb <= 0; R_select <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; LOin <= 1;			
+	end
+	
+    mul6, div6: begin
+		ZLowout <= 0; LOin <= 0;
+		ZHighout <= 1; HIin <= 1;
+	end
 		
-        //Not, Negate Operations
-		not3, neg3: begin	
-			MDR_select <= 0; instruction_reg_enable <= 0;PC_enable <= 0; PC_increment_enable <= 0;
-			Grb<=1; R_select <= 1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
-		not4, neg4: begin
-			Grb <=0; R_select <= 0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1;Gra<=1;R_enable<=1;
-		end
+    //Not, Negate Operations
+	not3, neg3: begin	
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;
+		Grb <= 1; R_select <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
+	
+    not4, neg4: begin
+		Grb <= 0; R_select <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
+	end
 
-		//And Immediate Operation
-		andi3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Gr b<=1 ;R_selec t<=1 ;Y_enabl e< =1;
-		end
+	//And Immediate Operation
+	andi3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Grb <= 1; R_select <= 1; Y_enable <= 1;
+	end
 
-		andi4: begin
-			Grb <= 0; R_select <= 0; Y_enable <= 0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	andi4: begin
+		Grb <= 0; R_select <= 0; Y_enable <= 0;
+		Cout <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
 
-		andi5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLo wout <= 1;Gra<=1;R_enable<=1;
-			#40 ZLowout <= 0;Gra<=1;R_select<=1;R_enable<=0;
-		end
+	andi5: begin
+		Cout <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
+		#40 ZLowout <= 0; Gra <= 1; R_select <= 1; R_enable <= 0;
+	end
 		
-        //Add Immediate Operation
-		addi3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Gr b<=1 ;R_selec t<=1 ;Y_enabl e< =1;
-		end
+    //Add Immediate Operation
+	addi3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Grb <= 1; R_select <= 1; Y_enable <= 1;
+	end
 
-		addi4: begin
-			Grb <= 0; R_select <= 0; Y_enable <= 0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	addi4: begin
+		Grb <= 0; R_select <= 0; Y_enable <= 0;
+		Cout <= 1; ZHighIn <= 1;  ZLowIn <= 1;
+	end
 
-		addi5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLo wout <= 1;Gra<=1;R_enable<=1;
-			#40 ZLowout <= 0;Gra<=1;R_select<=1;R_enable<=0;
-		end
+	addi5: begin
+		Cout <= 0; ZHighIn <= 0;  ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
+		#40 ZLowout <= 0; Gra <= 1; R_select <= 1; R_enable <= 0;
+	end
 		
-        //Or Immediate Operation
-		ori3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;	PC_enable <= 0; PC_increment_enable <= 0;		
-			Gr b<=1 ;R_selec t<=1 ;Y_enabl e< =1;
-		end
+    //Or Immediate Operation
+	ori3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;		
+		Grb <= 1; R_select <= 1; Y_enable <= 1;
+	end
 
-		ori4: begin
-			Grb <= 0; R_select <= 0; Y_enable <= 0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	ori4: begin
+		Grb <= 0; R_select <= 0; Y_enable <= 0;
+		Cout <= 1; ZHighIn <= 1;  ZLowIn <= 1;
+	end
 
-		ori5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1;Gra<=1;R_enable<=1;
-			#40 ZLowout <= 0;Gra<=1;R_select<=1;R_enable<=0;
-		end
+	ori5: begin
+		Cout <= 0; ZHighIn <= 0;  ZLowIn <= 0;
+		ZLowout <= 1; Gra <=1 ; R_enable <= 1;
+		#40 ZLowout <= 0; Gra <= 1; R_select <= 1; R_enable <= 0;
+	end
 		
-        //Load Operation
-		ld3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Grb<=1;BAout<=1;Y_enable<=1;
-		end
+    //Load Operation
+	ld3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Grb <= 1; BAout <= 1; Y_enable <= 1;
+	end
 
-		ld4: begin
-			Grb<=0;BAout<=0;Y_enable<=0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	ld4: begin
+		Grb <= 0; BAout <= 0; Y_enable <= 0;
+		Cout <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
 
-		ld5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1;MAR_enable<=1;
-		end
+	ld5: begin
+		Cout <= 0; ZHighIn <= 0;  ZLowIn <= 0;
+		ZLowout <= 1; MAR_enable <= 1;
+	end
 
-		ld6: begin
-			ZLowout <= 0; MAR_enable <= 0;
-			MDR_read <= 1; MDR_enable <= 1;
-		end
-		ld7: begin
-			MDR_read <= 0; MDR_enable <= 0;
-			MDR_select <= 1; Gra <= 1; R_enable <= 1;
-		end
+	ld6: begin
+		ZLowout <= 0; MAR_enable <= 0;
+		MDR_read <= 1; MDR_enable <= 1;
+	end
+	
+    ld7: begin
+		MDR_read <= 0; MDR_enable <= 0;
+		MDR_select <= 1; Gra <= 1; R_enable <= 1;
+	end
 		
-        //Load Immediate Operation
-		ldi3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;PC_enable <= 0; PC_increment_enable <= 0;			
-			Grb<=1;BAout<=1;Y_enable<=1;
-		end
+    //Load Immediate Operation
+	ldi3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;			
+		Grb <= 1; BAout <= 1; Y_enable <= 1;
+	end
 
-		ldi4: begin
-			Grb<=0;BAout<=0;Y_enable<=0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	ldi4: begin
+		Grb <= 0; BAout <= 0; Y_enable <= 0;
+		Cout <=1; ZHighIn <= 1; ZLowIn <= 1;
+	end
 
-		ldi5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1;Gra<=1;R_enable<=1;
-			#40 ZLowout <= 0;Gra<=0;R_enable<=0; 
-		end
+	ldi5: begin
+		Cout <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; Gra <= 1; R_enable <= 1;
+		#40 ZLowout <= 0; Gra <= 0; R_enable <= 0; 
+	end
 		
-        //Store Operation
-		st3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;	PC_enable <= 0; PC_increment_enable <= 0;		
-			Grb<=1;BAout<=1;Y_enable<=1;
-		end
+    //Store Operation
+	st3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;		
+		Grb <= 1; BAout <= 1; Y_enable <= 1;
+	end
 
-		st4: begin
-			Grb<=0;BAout<=0;Y_enable<=0;
-			Cout<=1;ZHighIn <= 1;  ZLowIn <= 1;
-		end
+	st4: begin
+		Grb <= 0; BAout <= 0; Y_enable <= 0;
+		Cout <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
 
-		st5: begin
-			Cout<=0; ZHighIn <= 0;  ZLowIn <= 0;
-			ZLowout <= 1;MAR_enable<=1;
-		end
+	st5: begin
+		Cout <= 0; ZHighIn <= 0; ZLowIn <= 0;
+		ZLowout <= 1; MAR_enable <= 1;
+	end
 
-		st6: begin
-			ZLowout <= 0; MAR_enable <= 0;
-			MDR_read <= 0; Gra <= 1; R_select <= 1; MDR_enable <= 1;
-		end
-		st7: begin
-			Gra <= 0; R_select <= 0; MDR_enable <= 0;
-			MDR_select <= 1; 
-			#5 RAM_write <= 1; 
-		end
+	st6: begin
+		ZLowout <= 0; MAR_enable <= 0;
+		MDR_read <= 0; Gra <= 1; R_select <= 1; MDR_enable <= 1;
+	end
+	
+    st7: begin
+		Gra <= 0; R_select <= 0; MDR_enable <= 0;
+		MDR_select <= 1; 
+		#5 RAM_write <= 1; 
+	end
 		
-        //Jump Register Operation
-		jr3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;	PC_enable <= 0; PC_increment_enable <= 0;				
-			Gra<=1;R_select<=1; PC_enable <= 1;
-			#40 PC_enable <= 0;
-		end
+    //Jump Register Operation
+	jr3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;				
+		Gra <= 1; R_select <= 1; PC_enable <= 1;
+		#40 PC_enable <= 0;
+	end
 		
-        //Jump and Link Operation
-		jal3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0;PC_increment_enable <= 0;	
-			PCout <= 1; R_enableIn <= 16'h4000; 
-		end
+    //Jump and Link Operation
+	jal3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		PC_select <= 1; R_enableIn <= 16'h4000; 
+	end
 
-		jal4: begin
-			R_enableIn <= 16'h0000; PCout <= 0;		
-			Gra <= 1; R_select <= 1; PC_enable <= 1;
-		end
+	jal4: begin
+		R_enableIn <= 16'h0000; PC_select <= 0;		
+		Gra <= 1; R_select <= 1; PC_enable <= 1;
+	end
 		
-        //Move from Hi Register Operation
-		mfhi3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Gra<=1;R_enable<=1; HIout<=1;
-			#40 Gra<=0;R_enable<=0; HIout<=0;
-		end
+    //Move from Hi Register Operation
+	mfhi3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Gra <= 1; R_enable <= 1; HIout <= 1;
+		#40 Gra <= 0; R_enable <= 0; HIout <= 0;
+	end
 		
-        //Move from Lo Register Operation
-		mflo3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Gra<=1;R_enable<=1; LOout<=1;
-			#40 Gra<=0;R_enable<=0; LOout<=0;
-		end
+    //Move from Lo Register Operation
+	mflo3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Gra <= 1; R_enable <= 1; LOout <= 1;
+		#40 Gra <= 0; R_enable <= 0; LOout <= 0;
+	end
 		
-        //Inputting Operation
-		in3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;			PC_enable <= 0; PC_increment_enable <= 0;
-			Gra<=1;R_enable<=1; InPortout <= 1;
-		end
+    //Inputting Operation
+	in3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;
+		Gra <= 1; R_enable <= 1; InPortout <= 1;
+	end
 		
-        //Outputting Operation
-		out3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;		PC_enable <= 0; PC_increment_enable <= 0;	
-			Gra<=1;R_select<=1;Y_enable<=1; OutPort_enable <= 1;
-		end
+    //Outputting Operation
+	out3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;	
+		Gra <= 1; R_select <= 1; Y_enable <= 1; OutPort_enable <= 1;
+	end
 		
-        //Branch Operation
-		br3: begin
-			MDR_select <= 0; instruction_reg_enable <= 0;	PC_enable <= 0; PC_increment_enable <= 0;		
-			Gra<=1;R_select<=1; CON_enable<=1;
-		end
+    //Branch Operation
+	br3: begin
+		MDR_select <= 0; instruction_reg_enable <= 0; PC_enable <= 0; PC_increment_enable <= 0;		
+		Gra <= 1; R_select <= 1; CON_enable <= 1;
+	end
 
-		br4: begin
-			Gra<=0;R_select<=0; CON_enable<=0;
-				PCout<=1; Y_enable <= 1;
-		end
+	br4: begin
+		Gra <= 0; R_select <= 0; CON_enable <= 0;
+		PC_select <= 1; Y_enable <= 1;
+	end
 
-		br5: begin
-			PCout<=0; Y_enable <= 0;
-			   	Cout <= 1; ZHighIn <= 1; ZLowIn <= 1;
-		end
+	br5: begin
+		PC_select <= 0; Y_enable <= 0;
+	   	Cout <= 1; ZHighIn <= 1; ZLowIn <= 1;
+	end
 
-		br6: begin
-			Cout <= 0; ZHighIn <= 0; ZLowIn <= 0;
-			   	ZLowout<=1; PC_enable<=1;
-		end
-		br7: begin
-			ZLowout<=0; PC_enable<=0;
-				PCout<=1; 
-		end
+	br6: begin
+		Cout <= 0; ZHighIn <= 0; ZLowIn <= 0;
+	   	ZLowout <= 1; PC_enable <= 1;
+	end
+	
+    br7: begin
+		ZLowout <= 0; PC_enable <= 0;
+		PC_select <= 1; 
+	end
 		
-        //No Operation
-		nop3: begin
-		end
+    //No Operation
+	nop3: begin
+	end
 		
-        //Halt Operation (Stops instruction execution)
-		halt3: begin
-			Run <= 0;
-		end
+    //Halt Operation (Stops instruction execution)
+	halt3: begin
+		Run <= 0;
+	end
 		
-        //Any other input would be default to do nothing
-        default: begin 
-		end
+    //Any other input would be default to do nothing
+    default: begin 
+	end
     endcase
 end
 endmodule
