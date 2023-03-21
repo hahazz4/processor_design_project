@@ -12,12 +12,12 @@ module select_encode_logic(
     output [31:0] C_sign_ext_Data);
 
     // Instruction Register Content Variables
-    wire [4:0] opcode;
-    wire [3:0] Ra, Rb, Rc;
+    reg [4:0] opcode;
+    reg [3:0] Ra, Rb, Rc;
 
     // 4 to 16 Decoder Input/Output Variable
-    wire [3:0] decoder_input;
-    wire [15:0] decoder_out;
+    reg [3:0] decoder_input;
+    reg [15:0] decoder_out;
 
     // Assigning Values to Instruction Register Content Variables
     assign opcode = instruction [31:27];    // Bits 27 -> 31 of the instruction register is the opcode
@@ -32,8 +32,8 @@ module select_encode_logic(
     SE_decoder decoderInstance(decoder_input, decoder_out);
 
     // Assigning Values to the Outputs
-    assign register_enable = {16{r_enable}} & decoder_out;
-    assign register_select = ({16{BAout}} | {16{r_select}}) & decoder_out;
+    assign r_enable = {16{r_enable}} & decoder_out;
+    assign r_select = ({16{BAout[15:0]}} | {16{r_select}}) & decoder_out;
     assign C_sign_ext_Data = {{13{instruction[18]}}, instruction[18:0]};
 
 endmodule

@@ -63,7 +63,7 @@ module datapath(
 	output wire [31:0] C_sign_ext_Data);
 
 	// General purpose registers r0-r15
-	R0_revised r0 (.clk(clk), .clr(clr), .enable(r0_enable), .BAout(BAout), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
+	R0_revised r0 (.clk(clk), .clr(clr), .enable(r0_enable), .BAout(BAout), .D(bus_Data), .Q(R0_Data)); 
 	register r1 (.clk(clk), .clr(clr), .enable(r1_enable), .D(bus_Data), .Q(R1_Data)); 
 	register r2 (.clk(clk), .clr(clr), .enable(r2_enable), .D(bus_Data), .Q(R2_Data));
 	register r3 (.clk(clk), .clr(clr), .enable(r3_enable), .D(bus_Data), .Q(R3_Data));

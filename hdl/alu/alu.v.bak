@@ -3,7 +3,7 @@ module alu (
 	input wire [31:0] A, B, Y,    //added Y
    input wire [4:0] opcode,
 
-   input br_flag,                //added branch flag
+   input br_flag;                //added branch flag
 
 	// ALU Output
 	output reg [63:0] result); 
@@ -21,23 +21,23 @@ module alu (
    left_rotate_op = 5'b01011, 
    right_rotate_op = 5'b01010, 
    negate_op = 5'b10001, 
-   not_op = 5'b10010,
-   ldw_op = 5'b00000,
-   ldi_op = 5'b00001,
-   stw_op = 5'b00010,
-   addi_op = 5'b01100,
-   andi_op = 5'b01100,
-   ori_op = 5'b01110,
-   br_op = 5'b10011,
+   not_op = 5'b10010;
+   ldw_op = 5'b00000;
+   ldi_op = 5'b00001;
+   stw_op = 5'b00010;
+   addi_op = 5'b01100;
+   andi_op = 5'b01100;
+   ori_op = 5'b01110;
+   br_op = 5'b10011;
    // brzr_op = 5'b10011;
    // brnz_op = 5'b10011;
    // brmi_op = 5'b10011;
    // brpl_op = 5'b10011;
-   jr_op = 5'b10100,
-   jal_op = 5'b10101,
-   mfhi_op = 5'b11000,
-   mflo_op = 5'b11001,
-   out = 5'b10111,
+   jr_op = 5'b10100;
+   jal_op = 5'b10101;
+   mfhi_op = 5'b11000;
+   mflo_op = 5'b11001;
+   out = 5'b10111;
    in = 5'b10110;
 
 	// And Operation
