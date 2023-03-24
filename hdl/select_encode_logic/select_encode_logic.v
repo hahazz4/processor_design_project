@@ -26,7 +26,7 @@ module select_encode_logic(
     assign Rc = instruction [18:15];        // Bit 15 -> 18 of the instruction register is register c
 
     // Input to the 4-to-16 Decoder
-    assign decoder_input = (instruction[26:23] & {4{Gra}}) | (instruction[22:19] & {4{Grb}}) | (instruction[18:15] & {4{Grc}});
+    assign decoder_input = (Ra & {4{Gra}}) | (Rb & {4{Grb}}) | (Rc & {4{Grc}});
 
     // Calling the 4-to-16 decoder and passing in the parameters: decoder_in, decoder_out
     SE_decoder decoderInstance(decoder_input, decoder_out);

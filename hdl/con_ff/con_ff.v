@@ -17,6 +17,9 @@ module con_ff(
     
     // Flip Flop D Input
     wire branchFlag;
+	 
+	 // Flip Flop Reset Signal
+	 wire FFreset;
 
     // 2-to-4 Decoder Output
     wire [3:0] decoder_out;
@@ -32,6 +35,6 @@ module con_ff(
 
     // Branch Flag and Flip Flip
     assign branchFlag = ((decoder_out[0] & equal) | (decoder_out[1] & notEqual) | (decoder_out[2] & positive) | (decoder_out[3] & negative));                                             //Assigning the value of con_D to the output wire con_out.
-    flip_flop flipFlopInstance(.clk(con_enable), .D(branchFlag), .Q(con_output));
+    flip_flop flipFlopInstance(.clk(con_enable), .reset(FFreset), .D(branchFlag), .Q(con_output));
 
 endmodule
