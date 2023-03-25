@@ -3,43 +3,15 @@ module alu (
 	input wire [31:0] A, B, Y,    //added Y
    input wire [4:0] opcode,
 
-   input br_flag,                //added branch flag
-
 	// ALU Output
 	output reg [63:0] result); 
    
-   parameter 
-   and_op = 5'b00101, 
-   or_op = 5'b00110, 
-   addition_op = 5'b00011, 
-   subtraction_op = 5'b00100, 
-   multiplication_op = 5'b01111, 
-   division_op = 5'b10000, 
-   left_shift_op = 5'b01001, 
-   right_shift_op = 5'b00111, 
-   arith_shift_right_op = 5'b01000, 
-   left_rotate_op = 5'b01011, 
-   right_rotate_op = 5'b01010, 
-   negate_op = 5'b10001, 
-   not_op = 5'b10010,
-   ldw_op = 5'b00000,
-   ldi_op = 5'b00001,
-   stw_op = 5'b00010,
-   addi_op = 5'b01100,
-   andi_op = 5'b01100,
-   ori_op = 5'b01110,
-   br_op = 5'b10011,
-   // brzr_op = 5'b10011;
-   // brnz_op = 5'b10011;
-   // brmi_op = 5'b10011;
-   // brpl_op = 5'b10011;
-   jr_op = 5'b10100,
-   jal_op = 5'b10101,
-   mfhi_op = 5'b11000,
-   mflo_op = 5'b11001,
-   out = 5'b10111,
-   in = 5'b10110;
-
+   parameter load = 5'b00000, loadImm = 5'b00001, store = 5'b00010, add = 5'b00011, sub = 5'b00100, 
+   AND = 5'b00101, OR = 5'b00110, right_shift = 5'b00111, arith_shift_right = 5'b01000, left_shift = 5'b01001, 
+   right_rotate = 5'b01010, left_rotate = 5'b01011, addImm = 5'b01100, AND_Imm = 5'b01101, OR_Imm = 5'b01110,
+   mul = 5'b01111, div = 5'b10000, negate = 5'b10001, NOT = 5'b10010, branch = 5'b10011, jr = 5'b10100, jal = 5'b10101,
+   in = 5'b10110, out = 5'b10111, mfhi = 5'b11000, mflo = 5'b11001;
+   
 	// And Operation
    wire [31:0] and_result;
 	logical_and andInstance(.A(A), .B(B), .result(and_result));
@@ -97,103 +69,82 @@ module alu (
    // Select operation
    always @(*) begin
       case(opcode)
+         // Add Operation
+         load, loadImm, store, add, addImm : begin
+            result[31:0] <= sum_result[31:0];
+            result[63:32] <= 32'd0;
+			end
+         
+         // Subtract Operation
+         sub : begin
+            result[31:0] <= difference_result[31:0];
+            result[63:32] <= 32'd0;
+			end
+         
          // And Operation
-         and_op : begin
+         AND, AND_Imm : begin
             result[31:0] <= and_result[31:0];
             result[63:32] <= 32'd0;
 			end
          
          // Or Operation
-         or_op	: begin
+         OR, OR_Imm : begin
             result[31:0] <= or_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
-         // Add Operation
-         addition_op	: begin
-            result[31:0] <= sum_result[31:0];
-            result[63:32] <= 32'd0;
-			end
-
-         // Subtract Operation
-         subtraction_op	: begin
-            result[31:0] <= difference_result[31:0];
-            result[63:32] <= 32'd0;
-			end
-         
-         // Multiply Operation
-         multiplication_op	: begin
-            result[63:0] <= product_result[63:0];
-			end
-
-         // Divide Operation
-         division_op	: begin
-            result[31:0] <= quotient_result[31:0];
-            result[63:32] <= remainder_result[31:0];
-			end
-			
-         // Left Shift Operation
-         left_shift_op : begin
-            result[31:0] <= leftShift_result[31:0];
-            result[63:32] <= 32'd0;
-			end
-
          // Right Shift Operation
-         right_shift_op	: begin
+         right_shift	: begin
             result[31:0] <= rightShift_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
          // Arithmetic Right Shift Operation
-         arith_shift_right_op	: begin
+         arith_shift_right	: begin
             result[31:0] <= arithShiftRight_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
-         // Left Rotate Operation
-         left_rotate_op	: begin
-            result[31:0] <= leftRotate_result[31:0];
+         // Left Shift Operation
+         left_shift : begin
+            result[31:0] <= leftShift_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
          // Right Rotate Operation
-         right_rotate_op : begin
+         right_rotate : begin
             result[31:0] <= rightRotate_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
+         // Left Rotate Operation
+         left_rotate	: begin
+            result[31:0] <= leftRotate_result[31:0];
+            result[63:32] <= 32'd0;
+			end
+         
+         // Multiply Operation
+         mul : begin
+            result[63:0] <= product_result[63:0];
+			end
+
+         // Divide Operation
+         div : begin
+            result[31:0] <= quotient_result[31:0];
+            result[63:32] <= remainder_result[31:0];
+			end
+			
          // Negate Operation
-         negate_op : begin
+         negate : begin
             result[31:0] <= negate_result[31:0];
             result[63:32] <= 32'd0;
 			end
 
          // Not Operation
-         not_op : begin
+         NOT : begin
             result[31:0] <= not_result[31:0];
             result[63:32] <= 32'd0;
 			end
-
-         // Load, load immediate, store, add immediate Operations
-         ldw_op, ldi_op, stw_op, addi_op : begin
-            result[31:0] <= sum_result[31:0];
-            result[63:32] <= 32'd0;
-			end
-
-         // Branch Operation
-         br_op : begin
-            if(br_flag)
-            begin
-               result[31:0] <= sum_result[31:0];
-               result[63:32] <= 32'd0;
-            end
-
-            else
-            begin
-               result[31:0] <= Y[31:0];
-               result[63:32] <= 32'd0;
-            end
-         end
 
 			// Default Case
 			default : begin
