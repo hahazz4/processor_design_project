@@ -1,6 +1,6 @@
 
 `timescale 1ns/10ps
-module load_tb;
+module addi_tb;
 	// CPU signals
 	reg clk;
 	

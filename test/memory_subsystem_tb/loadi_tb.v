@@ -1,6 +1,6 @@
 
 `timescale 1ns/10ps
-module load_tb;
+module loadi_tb;
 	// CPU signals
 	reg clk;
 	
@@ -76,11 +76,10 @@ module load_tb;
 	.MAR_Data(MAR_Data), .MDR_Data(MDR_Data), .MDataIN(MDataIN));
 	
 	// Time Signals and Load Registers
-	parameter Default = 0, load_01_T0 = 1, load_01_T1 = 2, load_01_T2 = 3, load_01_T3 = 4, load_01_T4 = 5, 
-	load_01_T5 = 6, load_01_T6 = 7, load_01_T7 = 8, load_02_T0 = 9, load_02_T1 = 10, load_02_T2 = 11, load_02_T3 = 12, 
-	load_02_T4 = 13, load_02_T5 = 14, load_02_T6 = 15, load_02_T7 = 16;
+	parameter Default = 0, loadi_01_T0 = 1, loadi_01_T1 = 2, loadi_01_T2 = 3, loadi_01_T3 = 4, loadi_01_T4 = 5, 
+	loadi_01_T5 = 6, loadi_02_T0 = 7, loadi_02_T1 = 8, loadi_02_T2 = 9, loadi_02_T3 = 10, loadi_02_T4 = 11, loadi_02_T5 = 12;
  
-	reg [4:0] Present_state = Default;
+	reg [3:0] Present_state = Default;
 
 	initial begin clk = 0; Present_state = Default; end
 	always #10 clk = ~clk;
@@ -88,23 +87,20 @@ module load_tb;
 	always @(posedge clk) // finite state machine; if clk rising-edge
 		begin
 			case (Present_state)
-				Default: #100 Present_state = load_01_T0;
-				load_01_T0 : #100 Present_state = load_01_T1;
-				load_01_T1 : #100 Present_state = load_01_T2;
-				load_01_T2 : #100 Present_state = load_01_T3;
-				load_01_T3 : #100 Present_state = load_01_T4;
-				load_01_T4 : #100 Present_state = load_01_T5;
-            	load_01_T5 : #100 Present_state = load_01_T6;
-            	load_01_T6 : #100 Present_state = load_01_T7;
+				Default: #100 Present_state = loadi_01_T0;
+				loadi_01_T0 : #100 Present_state = loadi_01_T1;
+				loadi_01_T1 : #100 Present_state = loadi_01_T2;
+				loadi_01_T2 : #100 Present_state = loadi_01_T3;
+				loadi_01_T3 : #100 Present_state = loadi_01_T4;
+				loadi_01_T4 : #100 Present_state = loadi_01_T5;
 
-				load_01_T7 : #100 Present_state = load_02_T0;
-				load_02_T0 : #100 Present_state = load_02_T1;
-				load_02_T1 : #100 Present_state = load_02_T2;
-				load_02_T2 : #100 Present_state = load_02_T3;
-				load_02_T3 : #100 Present_state = load_02_T4;
-				load_02_T4 : #100 Present_state = load_02_T5;
-            	load_02_T5 : #100 Present_state = load_02_T6;
-            	load_02_T6 : #100 Present_state = load_02_T7;
+				loadi_01_T5 : #100 Present_state = loadi_02_T0;
+				loadi_02_T0 : #100 Present_state = loadi_02_T1;
+				loadi_02_T1 : #100 Present_state = loadi_02_T2;
+				loadi_02_T2 : #100 Present_state = loadi_02_T3;
+				loadi_02_T3 : #100 Present_state = loadi_02_T4;
+				loadi_02_T4 : #100 Present_state = loadi_02_T5;
+
 			endcase
 		end
 	
@@ -132,45 +128,36 @@ module load_tb;
 					alu_instruction <= 0;
 				end
 			
-				load_01_T0, load_02_T0: begin // see if you need to de-assert these signals
+				loadi_01_T0, loadi_02_T0: begin // see if you need to de-assert these signals
 					#10 PC_select <= 1; MAR_enable <= 1; 
 			        #75 PC_select <= 0; MAR_enable <= 0; 
 				end
 				
-				load_01_T1, load_02_T1: begin
+				loadi_01_T1, loadi_02_T1: begin
 					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
 			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
-				load_01_T2, load_02_T2: begin
+				loadi_01_T2, loadi_02_T2: begin
 					#10 MDR_select <= 1; IR_enable <= 1;
 					#75 MDR_select <= 0; IR_enable <= 0;
 				end
 				
-				load_01_T3, load_02_T3: begin
+				loadi_01_T3, loadi_02_T3: begin
 					#10 Grb <= 1; BAout <= 1; Y_enable <= 1;
 			        #75 Grb <= 0; BAout <= 0; Y_enable <= 0;
 				end
 				
-				load_01_T4, load_02_T4: begin
-					#10 c_select <= 1; alu_instruction <= 5'b00000; Z_enable <= 1;
+				loadi_01_T4, loadi_02_T4: begin
+					#10 c_select <= 1; alu_instruction <= 5'b00001; Z_enable <= 1;
 					#75 c_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 				
-				load_01_T5, load_02_T5: begin
-					#10 Z_LO_select <= 1; MAR_enable <= 1;
-			        #75 Z_LO_select <= 0; MAR_enable <= 0;
+				loadi_01_T5, loadi_02_T5: begin
+					#10 Z_LO_select <= 1; Gra <= 1; r_enable <= 1;
+			        #75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
 				end
 
-                load_01_T6, load_02_T6: begin
-					#10 read <= 1; MDR_enable <= 1;
-			        #75 read <= 0; MDR_enable <= 0;
-				end
-
-                load_01_T7, load_02_T7: begin
-					#10 MDR_select <= 1; Gra <= 1; r_enable <= 1;
-			        #75 MDR_select <= 0; Gra <= 0; r_enable <= 0;
-				end
 			endcase
 		end
 endmodule
