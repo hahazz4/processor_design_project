@@ -1,21 +1,26 @@
 module ram(
-    input ram_enable,          // RAM enable control signal (active high)
+    input clk,          // RAM enable control signal (active high)
     input read,                // Read control signal (active high)
     input write,               // Write control signal (active high)
     input [31:0] data_in,      // Input data
     input [8:0] address_in,    // Address input
     output wire [31:0] data_out, // Output data
-    output [31:0] debug_port
+    
+    output [31:0] debug_port_01,
+    output [31:0] debug_port_02
 );
 
 reg [31:0] mem [511:0]; // Memory array
 reg [31:0] tempData;    // Temporary data storage
 
 initial begin 
-    $readmemh("store.mif", mem);
+    // $readmemh("load.mif", mem);
+    // $readmemh("loadi.mif", mem);
+    // $readmemh("store.mif", mem);
+    $readmemh("addi.mif", mem);
 end
 
-always @(posedge ram_enable) begin
+always @(posedge clk) begin
     if (write) begin
         mem[address_in] <= data_in; // Write data to memory location   
     end
@@ -25,6 +30,8 @@ always @(posedge ram_enable) begin
 end
 
 assign data_out = tempData;
-assign debug_port = mem [145];
+
+assign debug_port_01 = mem [144];
+assign debug_port_02 = mem [247];
 
 endmodule

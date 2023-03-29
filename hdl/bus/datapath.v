@@ -7,7 +7,7 @@ module datapath(
 	
 	// Register write/enable signals
 	input wire PC_enable, PC_increment_enable, IR_enable,
-	input wire con_enable, ram_enable,
+	input wire con_enable,
 	input wire Y_enable, Z_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
@@ -28,7 +28,9 @@ module datapath(
 	input wire MDR_select,
 	input wire InPort_select,
 	input wire c_select,
-	output wire [4:0] busDataSelect,
+
+	output wire [4:0] bus_select,
+	output wire [15:0] generalRegSelect,
 	
 	// ALU Opcode
 	input wire [4:0] alu_instruction,
@@ -37,7 +39,9 @@ module datapath(
 	output wire [31:0] bus_Data, // Data currently in the bus
 	// output wire [63:0] aluResult,
 	
-	output wire [31:0] R4_Data, debug_port,
+	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
+	output wire [31:0] R4_Data, R5_Data, R6_Data,
+	output wire [31:0] debug_port_01, debug_port_02,
 
 	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
@@ -49,15 +53,14 @@ module datapath(
 	wire [15:0] generalRegEnable;
 
 	// Select Signals
-	wire [15:0] generalRegSelect;
+	// wire [15:0] generalRegSelect;
 
 	// Data Signals
 	// wire [31:0] bus_Data, // Data currently in the bus
 	wire [63:0] aluResult;
 	
-	wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
-	// wire [31:0] R4_Data,
-	R5_Data, R6_Data, R7_Data, R8_Data, R9_Data, R10_Data, 
+	// wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data, R4_Data, R5_Data, R6_Data, 
+	wire [31:0] R7_Data, R8_Data, R9_Data, R10_Data, 
 	R11_Data, R12_Data, R13_Data, R14_Data, R15_Data;
 
 	// wire [31:0] PC_Data, IR_Data,
@@ -73,10 +76,10 @@ module datapath(
 	// 32-to-5 Encoder
     encoder encoder_instance(.generalRegSelect(generalRegSelect), .HI_select(HI_select), .LO_select(LO_select), 
 	.Z_HI_select(Z_HI_select), .Z_LO_select(Z_LO_select), .PC_select(PC_select), .MDR_select(MDR_select), 
-	.InPort_select(InPort_select), .c_select(c_select), .selectSignal(busDataSelect));
+	.InPort_select(InPort_select), .c_select(c_select), .selectSignal(bus_select));
 
 	// 32-to-1 Multiplexer
-    multiplexer multiplexer_instance(.selectSignal(busDataSelect), .muxIN_r0(R0_Data), 
+    multiplexer multiplexer_instance(.selectSignal(bus_select), .muxIN_r0(R0_Data), 
     .muxIN_r1(R1_Data), .muxIN_r2(R2_Data), .muxIN_r3(R3_Data), .muxIN_r4(R4_Data),
     .muxIN_r5(R5_Data), .muxIN_r6(R6_Data), .muxIN_r7(R7_Data), .muxIN_r8(R8_Data),
     .muxIN_r9(R9_Data), .muxIN_r10(R10_Data), .muxIN_r11(R11_Data), .muxIN_r12(R12_Data),
@@ -121,7 +124,7 @@ module datapath(
 	md_register MDR (.clk(clk), .clr(clr), .enable(MDR_enable), .read(read), .MDataIN(MDataIN), .bus_Data(bus_Data), .Q(MDR_Data));
 	 
 	// Ram Instance
-	ram ramInstance(.debug_port(debug_port), .ram_enable(ram_enable), .read(read), .write(write), .data_in(MDR_Data), .address_in(MAR_Data), .data_out(MDataIN));
+	ram ramInstance(.debug_port_01(debug_port_01), .debug_port_02(debug_port_02), .clk(clk), .read(read), .write(write), .data_in(MDR_Data), .address_in(MAR_Data), .data_out(MDataIN));
 
 	select_encode_logic selInstance(.instruction(IR_Data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .r_enable(r_enable), .r_select(r_select), 
 	.BAout(BAout), .C_sign_ext_Data(C_sign_ext_Data), .register_enable(generalRegEnable), .register_select(generalRegSelect));

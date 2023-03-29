@@ -22,14 +22,14 @@ module load_tb;
 	reg MDR_select;
 	reg c_select;
 	
-	wire [4:0] encode_sel_signal;
+	wire [4:0] bus_select;
 	
 	// ALU Opcode
 	reg [4:0] alu_instruction;
 
 	// Output Data Signals
 	wire [31:0] bus_Data; // Data currently in the bus
-	wire [63:0] aluResult;
+	// wire [63:0] aluResult;
 	
 	wire [31:0] R0_Data, R1_Data;
 
@@ -58,14 +58,14 @@ module load_tb;
 	.MDR_select(MDR_select),
 	.c_select(c_select),
 
-	.encode_sel_signal(encode_sel_signal),
+	.bus_select(bus_select),
 	
 	// ALU Opcode
 	.alu_instruction(alu_instruction),
 
 	// Output Data Signals
 	.bus_Data(bus_Data), // Data currently in the bus
-	.aluResult(aluResult),
+	// .aluResult(aluResult),
 	
 	.R0_Data(R0_Data),
 	.R1_Data(R1_Data),

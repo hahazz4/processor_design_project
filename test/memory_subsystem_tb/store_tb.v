@@ -8,7 +8,7 @@ module store_tb;
 	reg PC_enable, PC_increment_enable, IR_enable; 
 	reg Y_enable, Z_enable; 
 	reg MAR_enable, MDR_enable;
-	reg r_enable, ram_enable;
+	reg r_enable;
 
 	// Memory Data Multiplexer Read/Select Signal
 	reg read, write;
@@ -23,7 +23,7 @@ module store_tb;
 	reg c_select;
 	reg r_select;
 	
-	wire [4:0] busDataSelect;
+	wire [4:0] bus_select;
 	
 	// ALU Opcode
 	reg [4:0] alu_instruction;
@@ -32,7 +32,7 @@ module store_tb;
 	wire [31:0] bus_Data; // Data currently in the bus
 	// wire [63:0] aluResult;
 	
-	wire [31:0] R4_Data, debug_port;
+	wire [31:0] R4_Data, debug_port_01, debug_port_02;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -44,7 +44,7 @@ module store_tb;
 	
 	// Register write/enable signals
 	.PC_enable(PC_enable), .PC_increment_enable(PC_increment_enable), .IR_enable(IR_enable), 
-	.Y_enable(Y_enable), .Z_enable(Z_enable), .ram_enable(ram_enable),
+	.Y_enable(Y_enable), .Z_enable(Z_enable),
 	.MAR_enable(MAR_enable), .MDR_enable(MDR_enable), .r_enable(r_enable),
 
 	// Memory Data Multiplexer Read/Select Signal
@@ -60,7 +60,7 @@ module store_tb;
 	.c_select(c_select),
 	.r_select(r_select),
 
-	.busDataSelect(busDataSelect),
+	.bus_select(bus_select),
 	
 	// ALU Opcode
 	.alu_instruction(alu_instruction),
@@ -72,14 +72,15 @@ module store_tb;
 	.R4_Data(R4_Data),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
-	.Y_Data(Y_Data), .debug_port(debug_port),
+	.Y_Data(Y_Data), .debug_port_01(debug_port_01), .debug_port_02(debug_port_02),
 	.Z_HI_Data(Z_HI_Data), .Z_LO_Data(Z_LO_Data),
 	.MAR_Data(MAR_Data), .MDR_Data(MDR_Data), .MDataIN(MDataIN));
 	
 	// Time Signals and Load Registers
 	parameter Default = 0, loadi_01_T0 = 1, loadi_01_T1 = 2, loadi_01_T2 = 3, loadi_01_T3 = 4, loadi_01_T4 = 5, 
 	loadi_01_T5 = 6, store_01_T0 = 7, store_01_T1 = 8, store_01_T2 = 9, store_01_T3 = 10, 
-	store_01_T4 = 11, store_01_T5 = 12, store_01_T6 = 13;
+	store_01_T4 = 11, store_01_T5 = 12, store_01_T6 = 13, store_02_T0 = 14, store_02_T1 = 15, store_02_T2 = 16, store_02_T3 = 17, 
+	store_02_T4 = 18, store_02_T5 = 19, store_02_T6 = 20;
  
 	reg [4:0] Present_state = Default;
 
@@ -103,6 +104,15 @@ module store_tb;
 				store_01_T3 : #100 Present_state = store_01_T4;
 				store_01_T4 : #100 Present_state = store_01_T5;
             	store_01_T5 : #100 Present_state = store_01_T6;
+
+				store_01_T6 : #100 Present_state = store_02_T0;
+				store_02_T0 : #100 Present_state = store_02_T1;
+				store_02_T1 : #100 Present_state = store_02_T2;
+				store_02_T2 : #100 Present_state = store_02_T3;
+				store_02_T3 : #100 Present_state = store_02_T4;
+				store_02_T4 : #100 Present_state = store_02_T5;
+            	store_02_T5 : #100 Present_state = store_02_T6;
+
 			endcase
 		end
 	
@@ -115,7 +125,7 @@ module store_tb;
 					IR_enable <= 0;
 					Y_enable <= 0; Z_enable <= 0;
 					PC_enable <= 0; PC_increment_enable <= 0;
-					r_enable <= 0; ram_enable <= 0;
+					r_enable <= 0;
 
 					// Select Signals
 					PC_select <= 0;
@@ -137,8 +147,8 @@ module store_tb;
 				end
 				
 				loadi_01_T1: begin
-					#10 PC_increment_enable <= 1; read <= 1; ram_enable <= 1; MDR_enable <= 1;
-			        #75 PC_increment_enable <= 0; read <= 0; ram_enable <= 0; MDR_enable <= 0;
+					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
+			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
 				loadi_01_T2: begin
@@ -161,15 +171,15 @@ module store_tb;
 			        #75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
 				end
 
-				// Store Instruction
+				// Store Instruction 01
 				store_01_T0: begin // see if you need to de-assert these signals
 					#10 PC_select <= 1; MAR_enable <= 1; 
 			        #75 PC_select <= 0; MAR_enable <= 0; 
 				end
 				
 				store_01_T1: begin
-					#10 PC_increment_enable <= 1; read <= 1; ram_enable <= 1; MDR_enable <= 1;
-			        #75 PC_increment_enable <= 0; read <= 0; ram_enable <= 0; MDR_enable <= 0;
+					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
+			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
 				store_01_T2: begin
@@ -193,8 +203,44 @@ module store_tb;
 				end
 
                 store_01_T6: begin
-					#10 write <= 1; ram_enable <= 1; MDR_enable <= 1; Gra <= 1; r_select <= 1;
-			        #75 write <= 0; ram_enable <= 0; MDR_enable <= 0; Gra <= 0; r_select <= 0;
+					#10 write <= 1; MDR_enable <= 1; Gra <= 1; r_select <= 1;
+			        #75 write <= 0; MDR_enable <= 0; Gra <= 0; r_select <= 0;
+				end
+
+				// Store Instruction 02
+				store_02_T0: begin // see if you need to de-assert these signals
+					#10 PC_select <= 1; MAR_enable <= 1; 
+			        #75 PC_select <= 0; MAR_enable <= 0; 
+				end
+				
+				store_02_T1: begin
+					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
+			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
+				end
+				
+				store_02_T2: begin
+					#10 MDR_select <= 1; IR_enable <= 1;
+					#75 MDR_select <= 0; IR_enable <= 0;
+				end
+
+				store_02_T3: begin
+					#10 Grb <= 1; r_select <= 1; Y_enable <= 1;
+					#75 Grb <= 0; r_select <= 0; Y_enable <= 0;
+				end
+
+				store_02_T4: begin
+					#10 c_select <= 1; alu_instruction <= 5'b00010; Z_enable <= 1;
+					#75 c_select <= 0; alu_instruction <= 5'b00010; Z_enable <= 0;
+				end
+
+				store_02_T5: begin
+					#10 Z_LO_select <= 1; MAR_enable <= 1;
+					#75 Z_LO_select <= 0; MAR_enable <= 0;
+				end
+
+				store_02_T6: begin
+					#10 Gra <= 1; r_select <= 1; write <= 1; MDR_enable <= 1;  
+					#75 Gra <= 0; r_select <= 0; write <= 0; MDR_enable <= 0; 
 				end
 
 			endcase
