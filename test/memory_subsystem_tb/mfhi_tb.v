@@ -1,6 +1,6 @@
 `timescale 1ns/10ps
 
-module jal_tb;
+module mfhi_tb;
 	// CPU signals
 	reg clk;
 	
@@ -37,7 +37,7 @@ module jal_tb;
 	
     wire con_output;
 
-	wire [31:0] R2_Data;
+	wire [31:0] R4_Data;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -51,7 +51,7 @@ module jal_tb;
 	.PC_enable(PC_enable), .PC_increment_enable(PC_increment_enable), .IR_enable(IR_enable), 
 	.Y_enable(Y_enable), .Z_enable(Z_enable), .con_enable(con_enable),
 	.MAR_enable(MAR_enable), .MDR_enable(MDR_enable), .r_enable(r_enable),
-	.manual_R15_enable(manual_R15_enable),
+	.manual_R15_enable(manual_R15_enable), .HI_enable(HI_enable),
 
 	// Memory Data Multiplexer Read/Select Signal
 	.read(read), .write(write),
@@ -75,7 +75,7 @@ module jal_tb;
 	.bus_Data(bus_Data), // Data currently in the bus
 	// .aluResult(aluResult),
 	
-	.R2_Data(R2_Data), .con_output(con_output),
+	.R4_Data(R4_Data), .con_output(con_output),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
 	.Y_Data(Y_Data),
@@ -84,7 +84,7 @@ module jal_tb;
 	
 	// Time Signals and Load Registers
 	parameter Default = 0, loadi_T0 = 1, loadi_T1 = 2, loadi_T2 = 3, loadi_T3 = 4, 
-	loadi_T4 = 5, loadi_T5 = 6, jal_T0 = 7, jal_T1 = 8, jal_T2 = 9, jal_T3 = 10, jal_T4 = 11;
+	loadi_T4 = 5, loadi_T5 = 6, mfhi_T0 = 7, mfhi_T1 = 8, mfhi_T2 = 9, mfhi_T3 = 10;
 
 	reg [4:0] Present_state = Default;
 
@@ -101,11 +101,11 @@ module jal_tb;
 				loadi_T3 : #100 Present_state = loadi_T4;
 				loadi_T4 : #100 Present_state = loadi_T5;
 				
-				loadi_T5 : #100 Present_state = jal_T0;
-				jal_T0 : #100 Present_state = jal_T1;
-				jal_T1 : #100 Present_state = jal_T2;
-				jal_T2 : #100 Present_state = jal_T3;
-				jal_T3 : #100 Present_state = jal_T4;
+				loadi_T5 : #100 Present_state = mfhi_T0;
+				mfhi_T0 : #100 Present_state = mfhi_T1;
+				mfhi_T1 : #100 Present_state = mfhi_T2;
+				mfhi_T2 : #100 Present_state = mfhi_T3;
+
 			endcase
 		end
 	
@@ -119,6 +119,7 @@ module jal_tb;
 					Y_enable <= 0; Z_enable <= 0;
 					PC_enable <= 0; PC_increment_enable <= 0;
 					r_enable <= 0; con_enable <= 0; manual_R15_enable <= 0;
+					HI_enable <= 0;
 
 					// Select Signals
 					PC_select <= 0;
@@ -162,34 +163,29 @@ module jal_tb;
 				end
 				
 				loadi_T5: begin
-					#10 Z_LO_select <= 1; Gra <= 1; r_enable <= 1;
-			        #75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
+					#10 Z_LO_select <= 1; HI_enable <= 1;
+			        #75 Z_LO_select <= 0; HI_enable <= 0;
 				end
 
-				// Branch Instruction
-				jal_T0: begin
+				// mfhi Instruction
+				mfhi_T0: begin
 					#10 PC_select <= 1; MAR_enable <= 1;
 					#75 PC_select <= 0; MAR_enable <= 0;
 				end
 
-				jal_T1: begin
+				mfhi_T1: begin
 					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
 					#75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 
-				jal_T2: begin
+				mfhi_T2: begin
 					#10 MDR_select <= 1; IR_enable <= 1;
 					#75 MDR_select <= 0; IR_enable <= 0;
 				end
 
-				jal_T3: begin
-					#10 manual_R15_enable <= 1; PC_select <= 1;
-					#75 manual_R15_enable <= 0; PC_select <= 0;
-				end
-
-				jal_T4: begin
-					#10 Gra <= 1; r_select <= 1; PC_enable <= 1;
-					#75 Gra <= 0; r_select <= 0; PC_enable <= 0;
+				mfhi_T3: begin
+					#10 Gra <= 1; r_enable <= 1; HI_select <= 1;
+					#75 Gra <= 0; r_enable <= 0; HI_select <= 0;
 				end
 
 			endcase

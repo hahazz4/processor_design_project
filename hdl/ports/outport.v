@@ -1,23 +1,17 @@
 module outport(
-    input clr, clk, enable,
-    input wire [31:0] busmux_out,
-    output wire [31:0] out_port);
+    input clk, clr, enable,
+    input wire [31:0] bus_Data,
+    output wire [31:0] outport_Data);
 
-reg [31:0] q;
-initial q = 32'h0;
+reg [31:0] tempData;
+initial tempData = 32'h0;
 
 always @(posedge clk) 
 begin
-    if(clr)
-    begin
-        q <= {32{1'b0}};
-    end
-
-	else if(enable)
-    begin
-        q <= busmux_out;
-    end
+    if (clr) tempData <= {32{1'b0}};
+    else if (enable) tempData <= bus_Data;
 end
 
-assign out_port = q[31:0];
+assign outPort = tempData[31:0];
+
 endmodule

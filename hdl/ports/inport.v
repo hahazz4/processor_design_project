@@ -1,23 +1,17 @@
 module inport(
-    input clr, clk,
-    input wire [31:0] input_data,
-    output wire [31:0] busmux_in);
+    input clk, clr,
+    input wire [31:0] input_Data,
+    output wire [31:0] inport_Data);
 
-reg [31:0] q;
-initial q = 32'h0;
+reg [31:0] tempData;
+initial tempData = 32'h0;
 
 always @(posedge clk) 
 begin
-    if (clr)
-    begin
-        q <= {32{1'b0}};
-    end
-
-	else
-    begin
-        q <= input_data;
-    end
+    if (clr) tempData <= {32{1'b0}};
+    else tempData <= input_Data;
 end
 
-assign busmux_in = q[31:0];
+assign inport_Data = tempData[31:0];
+
 endmodule

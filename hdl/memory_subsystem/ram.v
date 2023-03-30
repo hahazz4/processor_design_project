@@ -24,6 +24,12 @@ initial begin
     // $readmemh("brnz.mif", mem);
     // $readmemh("brpl.mif", mem);
     // $readmemh("brmi.mif", mem);
+    // $readmemh("jr.mif", mem);
+    // $readmemh("jal.mif", mem);
+    // $readmemh("mfhi.mif", mem);
+    // $readmemh("mflo.mif", mem);
+    // $readmemh("inport.mif", mem);
+    // $readmemh("outport.mif", mem);
 end
 
 always @(posedge clk) begin

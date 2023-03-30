@@ -11,7 +11,8 @@ module datapath(
 	input wire Y_enable, Z_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
-	input wire manual_R15_enable;
+	input wire manual_R15_enable,
+	input wire outport_enable,
 
 	// Memory Data Multiplexer Read/Select Signal
 	input wire read, write,
@@ -24,7 +25,7 @@ module datapath(
 	input wire HI_select, LO_select, 
 	input wire Z_HI_select, Z_LO_select, 
 	input wire MDR_select,
-	input wire InPort_select,
+	input wire inport_select,
 	input wire c_select,
 
 	output wire [4:0] bus_select,
@@ -42,7 +43,8 @@ module datapath(
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
 	output wire [31:0] R4_Data, R5_Data, R6_Data,
-	output wire [31:0] debug_port_01, debug_port_02,
+	output wire [31:0] debug_port_01, debug_port_02, 
+	output wire [31:0] outport_Data,
 
 	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
@@ -71,16 +73,17 @@ module datapath(
 	// wire [8:0] MAR_Data,
 	// wire [31:0] MDR_Data, MDataIN,
 	wire [31:0] HI_Data, LO_Data;
-	wire [31:0] InPort_Data;
+	wire [31:0] input_Data, inport_Data;
 	wire [31:0] C_sign_ext_Data;
 
+	assign input_Data = 32'd9
 	assign R15_enable = manual_R15_enable | register_enable[15];
 
 	/* Bus Components */
 	// 32-to-5 Encoder
     encoder encoder_instance(.register_select(register_select), .HI_select(HI_select), .LO_select(LO_select), 
 	.Z_HI_select(Z_HI_select), .Z_LO_select(Z_LO_select), .PC_select(PC_select), .MDR_select(MDR_select), 
-	.InPort_select(InPort_select), .c_select(c_select), .selectSignal(bus_select));
+	.inport_select(inport_select), .c_select(c_select), .selectSignal(bus_select));
 
 	// 32-to-1 Multiplexer
     multiplexer multiplexer_instance(.selectSignal(bus_select), .muxIN_r0(R0_Data), 
@@ -89,7 +92,7 @@ module datapath(
     .muxIN_r9(R9_Data), .muxIN_r10(R10_Data), .muxIN_r11(R11_Data), .muxIN_r12(R12_Data),
     .muxIN_r13(R13_Data), .muxIN_r14(R14_Data), .muxIN_r15(R15_Data), .muxIN_HI(HI_Data),
     .muxIN_LO(LO_Data), .muxIN_Z_HI(Z_HI_Data), .muxIN_Z_LO(Z_LO_Data), .muxIN_PC(PC_Data), 
-    .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
+    .muxIN_MDR(MDR_Data), .muxIN_inport(inport_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	// General purpose registers r0 -> r15
 	R0_revised r0 (.clk(clk), .clr(clr), .enable(register_enable[0]), .BAout(BAout), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
@@ -135,4 +138,7 @@ module datapath(
 
 	con_ff conInstance(.bus_Data(bus_Data), .instruction(IR_Data), .con_enable(con_enable), .con_output(con_output));
 	
+	inport inportInstance(.clk(clk), .clr(clr), .input_Data(input_Data), .inport_Data(inport_Data));
+	outport outportInstance(.clk(clk), .clr(clr), .enable(outport_enable), .bus_Data(bus_Data), .outport_Data(outport_Data));
+
 endmodule // Datapath end.
