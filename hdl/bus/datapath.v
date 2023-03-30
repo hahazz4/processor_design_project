@@ -11,15 +11,13 @@ module datapath(
 	input wire Y_enable, Z_enable, 
 	input wire MAR_enable, MDR_enable, 
 	input wire HI_enable, LO_enable,
+	input wire manual_R15_enable;
 
 	// Memory Data Multiplexer Read/Select Signal
 	input wire read, write,
 
 	// Select and Encode Logic Inputs
 	input wire Gra, Grb, Grc, r_enable, r_select, BAout,
-
-	// CON FF Module
-	input wire con_output,
 
 	// Encoder Output Select Signals
 	input wire PC_select,
@@ -30,7 +28,7 @@ module datapath(
 	input wire c_select,
 
 	output wire [4:0] bus_select,
-	output wire [15:0] generalRegSelect,
+	output wire [15:0] register_select,
 	
 	// ALU Opcode
 	input wire [4:0] alu_instruction,
@@ -38,6 +36,9 @@ module datapath(
 	// Output Data Signals
 	output wire [31:0] bus_Data, // Data currently in the bus
 	// output wire [63:0] aluResult,
+
+	// CON FF Module
+	output wire con_output,
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
 	output wire [31:0] R4_Data, R5_Data, R6_Data,
@@ -50,10 +51,11 @@ module datapath(
 	output wire [31:0] MDR_Data, MDataIN);
 
 	// Enable Signals
-	wire [15:0] generalRegEnable;
+	wire [15:0] register_enable;
+	wire R15_enable;
 
 	// Select Signals
-	// wire [15:0] generalRegSelect;
+	// wire [15:0] register_select;
 
 	// Data Signals
 	// wire [31:0] bus_Data, // Data currently in the bus
@@ -72,9 +74,11 @@ module datapath(
 	wire [31:0] InPort_Data;
 	wire [31:0] C_sign_ext_Data;
 
+	assign R15_enable = manual_R15_enable | register_enable[15];
+
 	/* Bus Components */
 	// 32-to-5 Encoder
-    encoder encoder_instance(.generalRegSelect(generalRegSelect), .HI_select(HI_select), .LO_select(LO_select), 
+    encoder encoder_instance(.register_select(register_select), .HI_select(HI_select), .LO_select(LO_select), 
 	.Z_HI_select(Z_HI_select), .Z_LO_select(Z_LO_select), .PC_select(PC_select), .MDR_select(MDR_select), 
 	.InPort_select(InPort_select), .c_select(c_select), .selectSignal(bus_select));
 
@@ -88,22 +92,22 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_InPort(InPort_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	// General purpose registers r0 -> r15
-	R0_revised r0 (.clk(clk), .clr(clr), .enable(generalRegEnable[0]), .BAout(BAout), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
-	register r1 (.clk(clk), .clr(clr), .enable(generalRegEnable[1]), .D(bus_Data), .Q(R1_Data)); 
-	register r2 (.clk(clk), .clr(clr), .enable(generalRegEnable[2]), .D(bus_Data), .Q(R2_Data));
-	register r3 (.clk(clk), .clr(clr), .enable(generalRegEnable[3]), .D(bus_Data), .Q(R3_Data));
-	register r4 (.clk(clk), .clr(clr), .enable(generalRegEnable[4]), .D(bus_Data), .Q(R4_Data));
-	register r5 (.clk(clk), .clr(clr), .enable(generalRegEnable[5]), .D(bus_Data), .Q(R5_Data));
-	register r6 (.clk(clk), .clr(clr), .enable(generalRegEnable[6]), .D(bus_Data), .Q(R6_Data));
-	register r7 (.clk(clk), .clr(clr), .enable(generalRegEnable[7]), .D(bus_Data), .Q(R7_Data));
-	register r8 (.clk(clk), .clr(clr), .enable(generalRegEnable[8]), .D(bus_Data), .Q(R8_Data));
-	register r9 (.clk(clk), .clr(clr), .enable(generalRegEnable[9]), .D(bus_Data), .Q(R9_Data));
-	register r10 (.clk(clk), .clr(clr), .enable(generalRegEnable[10]), .D(bus_Data), .Q(R10_Data));
-	register r11 (.clk(clk), .clr(clr), .enable(generalRegEnable[11]), .D(bus_Data), .Q(R11_Data));
-	register r12 (.clk(clk), .clr(clr), .enable(generalRegEnable[12]), .D(bus_Data), .Q(R12_Data));
-	register r13 (.clk(clk), .clr(clr), .enable(generalRegEnable[13]), .D(bus_Data), .Q(R13_Data));
-	register r14 (.clk(clk), .clr(clr), .enable(generalRegEnable[14]), .D(bus_Data), .Q(R14_Data));
-	register r15 (.clk(clk), .clr(clr), .enable(generalRegEnable[15]), .D(bus_Data), .Q(R15_Data));
+	R0_revised r0 (.clk(clk), .clr(clr), .enable(register_enable[0]), .BAout(BAout), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
+	register r1 (.clk(clk), .clr(clr), .enable(register_enable[1]), .D(bus_Data), .Q(R1_Data)); 
+	register r2 (.clk(clk), .clr(clr), .enable(register_enable[2]), .D(bus_Data), .Q(R2_Data));
+	register r3 (.clk(clk), .clr(clr), .enable(register_enable[3]), .D(bus_Data), .Q(R3_Data));
+	register r4 (.clk(clk), .clr(clr), .enable(register_enable[4]), .D(bus_Data), .Q(R4_Data));
+	register r5 (.clk(clk), .clr(clr), .enable(register_enable[5]), .D(bus_Data), .Q(R5_Data));
+	register r6 (.clk(clk), .clr(clr), .enable(register_enable[6]), .D(bus_Data), .Q(R6_Data));
+	register r7 (.clk(clk), .clr(clr), .enable(register_enable[7]), .D(bus_Data), .Q(R7_Data));
+	register r8 (.clk(clk), .clr(clr), .enable(register_enable[8]), .D(bus_Data), .Q(R8_Data));
+	register r9 (.clk(clk), .clr(clr), .enable(register_enable[9]), .D(bus_Data), .Q(R9_Data));
+	register r10 (.clk(clk), .clr(clr), .enable(register_enable[10]), .D(bus_Data), .Q(R10_Data));
+	register r11 (.clk(clk), .clr(clr), .enable(register_enable[11]), .D(bus_Data), .Q(R11_Data));
+	register r12 (.clk(clk), .clr(clr), .enable(register_enable[12]), .D(bus_Data), .Q(R12_Data));
+	register r13 (.clk(clk), .clr(clr), .enable(register_enable[13]), .D(bus_Data), .Q(R13_Data));
+	register r14 (.clk(clk), .clr(clr), .enable(register_enable[14]), .D(bus_Data), .Q(R14_Data));
+	register r15 (.clk(clk), .clr(clr), .enable(R15_enable), .D(bus_Data), .Q(R15_Data));
 
 	// ALU Output Registers
 	register HI (.clk(clk), .clr(clr), .enable(HI_enable), .D(bus_Data), .Q(HI_Data));
@@ -127,7 +131,7 @@ module datapath(
 	ram ramInstance(.debug_port_01(debug_port_01), .debug_port_02(debug_port_02), .clk(clk), .read(read), .write(write), .data_in(MDR_Data), .address_in(MAR_Data), .data_out(MDataIN));
 
 	select_encode_logic selInstance(.instruction(IR_Data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .r_enable(r_enable), .r_select(r_select), 
-	.BAout(BAout), .C_sign_ext_Data(C_sign_ext_Data), .register_enable(generalRegEnable), .register_select(generalRegSelect));
+	.BAout(BAout), .C_sign_ext_Data(C_sign_ext_Data), .register_enable(register_enable), .register_select(register_select));
 
 	con_ff conInstance(.bus_Data(bus_Data), .instruction(IR_Data), .con_enable(con_enable), .con_output(con_output));
 	

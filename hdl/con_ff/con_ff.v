@@ -18,8 +18,8 @@ module con_ff(
     // Flip Flop D Input
     wire branchFlag;
 	 
-	 // Flip Flop Reset Signal
-	 wire FFreset;
+	// Flip Flop Reset Signal
+	wire FFreset;
 
     // 2-to-4 Decoder Output
     wire [3:0] decoder_out;

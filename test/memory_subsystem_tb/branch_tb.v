@@ -1,14 +1,15 @@
 `timescale 1ns/10ps
 
-module addi_tb;
+module branch_tb;
 	// CPU signals
 	reg clk;
 	
-	// Register write/enable signals 
-	reg PC_enable, PC_increment_enable, IR_enable; 
-	reg Y_enable, Z_enable; 
+	// Register write/enable signals
+	reg PC_enable, PC_increment_enable, IR_enable;
+	reg Y_enable, Z_enable;
 	reg MAR_enable, MDR_enable;
 	reg r_enable;
+	reg con_enable;
 
 	// Memory Data Multiplexer Read/Select Signal
 	reg read, write;
@@ -16,7 +17,7 @@ module addi_tb;
 	// Select and Encode Input Signals
 	reg Gra, Grb, BAout;
 
-	// Encoder Output Select Signals 
+	// Encoder Output Select Signals
 	reg PC_select;
 	reg Z_LO_select;
 	reg MDR_select;
@@ -33,7 +34,9 @@ module addi_tb;
 	wire [31:0] bus_Data; // Data currently in the bus
 	// wire [63:0] aluResult;
 	
-	wire [31:0] R2_Data, R3_Data;
+    wire con_output;
+
+	wire [31:0] R6_Data;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -41,11 +44,11 @@ module addi_tb;
 	wire [31:0] MAR_Data, MDR_Data, MDataIN;
 
 	datapath datapathInstance(	// CPU signals
-	.clk(clk), 
+	.clk(clk),
 	
 	// Register write/enable signals
 	.PC_enable(PC_enable), .PC_increment_enable(PC_increment_enable), .IR_enable(IR_enable), 
-	.Y_enable(Y_enable), .Z_enable(Z_enable),
+	.Y_enable(Y_enable), .Z_enable(Z_enable), .con_enable(con_enable),
 	.MAR_enable(MAR_enable), .MDR_enable(MDR_enable), .r_enable(r_enable),
 
 	// Memory Data Multiplexer Read/Select Signal
@@ -70,7 +73,7 @@ module addi_tb;
 	.bus_Data(bus_Data), // Data currently in the bus
 	// .aluResult(aluResult),
 	
-	.R2_Data(R2_Data), .R3_Data(R3_Data),
+	.R6_Data(R6_Data), .con_output(con_output),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
 	.Y_Data(Y_Data),
@@ -78,9 +81,10 @@ module addi_tb;
 	.MAR_Data(MAR_Data), .MDR_Data(MDR_Data), .MDataIN(MDataIN));
 	
 	// Time Signals and Load Registers
-	parameter Default = 0, loadi_01_T0 = 1, loadi_01_T1 = 2, loadi_01_T2 = 3, loadi_01_T3 = 4, loadi_01_T4 = 5, 
-	loadi_01_T5 = 6, addi_01_T0 = 7, addi_01_T1 = 8, addi_01_T2 = 9, addi_01_T3 = 10, addi_01_T4 = 11, addi_01_T5 = 12;
- 
+	parameter Default = 0, loadi_T0 = 1, loadi_T1 = 2, loadi_T2 = 3, loadi_T3 = 4, 
+	loadi_T4 = 5, loadi_T5 = 6, branch_T0 = 7, branch_T1 = 8, branch_T2 = 9, branch_T3 = 10,
+	branch_T4 = 11, branch_T5 = 12, branch_T6 = 13; 
+
 	reg [4:0] Present_state = Default;
 
 	initial begin clk = 0; Present_state = Default; end
@@ -89,20 +93,20 @@ module addi_tb;
 	always @(posedge clk) // finite state machine; if clk rising-edge
 		begin
 			case (Present_state)
-				Default: #100 Present_state = loadi_01_T0;
-				loadi_01_T0 : #100 Present_state = loadi_01_T1;
-				loadi_01_T1 : #100 Present_state = loadi_01_T2;
-				loadi_01_T2 : #100 Present_state = loadi_01_T3;
-				loadi_01_T3 : #100 Present_state = loadi_01_T4;
-				loadi_01_T4 : #100 Present_state = loadi_01_T5;
-
-				loadi_01_T5 : #100 Present_state = addi_01_T0;
-				addi_01_T0 : #100 Present_state = addi_01_T1;
-				addi_01_T1 : #100 Present_state = addi_01_T2;
-				addi_01_T2 : #100 Present_state = addi_01_T3;
-				addi_01_T3 : #100 Present_state = addi_01_T4;
-				addi_01_T4 : #100 Present_state = addi_01_T5;
-
+				Default: #100 Present_state = loadi_T0;
+				loadi_T0 : #100 Present_state = loadi_T1;
+				loadi_T1 : #100 Present_state = loadi_T2;
+				loadi_T2 : #100 Present_state = loadi_T3;
+				loadi_T3 : #100 Present_state = loadi_T4;
+				loadi_T4 : #100 Present_state = loadi_T5;
+				
+				loadi_T5 : #100 Present_state = branch_T0;
+				branch_T0 : #100 Present_state = branch_T1;
+				branch_T1 : #100 Present_state = branch_T2;
+				branch_T2 : #100 Present_state = branch_T3;
+				branch_T3 : #100 Present_state = branch_T4;
+				branch_T4 : #100 Present_state = branch_T5;
+				branch_T5 : #100 Present_state = branch_T6;
 			endcase
 		end
 	
@@ -115,7 +119,7 @@ module addi_tb;
 					IR_enable <= 0;
 					Y_enable <= 0; Z_enable <= 0;
 					PC_enable <= 0; PC_increment_enable <= 0;
-					r_enable <= 0;
+					r_enable <= 0; con_enable <= 0;
 
 					// Select Signals
 					PC_select <= 0;
@@ -129,67 +133,74 @@ module addi_tb;
 					
 					// Register Contents
 					alu_instruction <= 0;
+
+					con_output <= 0;
 				end
-			
-				loadi_01_T0: begin // see if you need to de-assert these signals
+				
+				loadi_T0: begin // see if you need to de-assert these signals
 					#10 PC_select <= 1; MAR_enable <= 1; 
 			        #75 PC_select <= 0; MAR_enable <= 0; 
 				end
 				
-				loadi_01_T1: begin
+				loadi_T1: begin
 					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
 			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
-				loadi_01_T2: begin
+				loadi_T2: begin
 					#10 MDR_select <= 1; IR_enable <= 1;
 					#75 MDR_select <= 0; IR_enable <= 0;
 				end
 				
-				loadi_01_T3: begin
+				loadi_T3: begin
 					#10 Grb <= 1; BAout <= 1; Y_enable <= 1;
 			        #75 Grb <= 0; BAout <= 0; Y_enable <= 0;
 				end
 				
-				loadi_01_T4: begin
+				loadi_T4: begin
 					#10 c_select <= 1; alu_instruction <= 5'b00001; Z_enable <= 1;
 					#75 c_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 				
-				loadi_01_T5: begin
+				loadi_T5: begin
 					#10 Z_LO_select <= 1; Gra <= 1; r_enable <= 1;
 			        #75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
 				end
 
-				// Add Immediate Instruction
-				addi_01_T0: begin // see if you need to de-assert these signals
+				// Branch Instruction
+				branch_T0: begin // see if you need to de-assert these signals
 					#10 PC_select <= 1; MAR_enable <= 1; 
 			        #75 PC_select <= 0; MAR_enable <= 0; 
 				end
 				
-				addi_01_T1: begin
+				branch_T1: begin
 					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
 			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
-				addi_01_T2: begin
+				branch_T2: begin
 					#10 MDR_select <= 1; IR_enable <= 1;
 					#75 MDR_select <= 0; IR_enable <= 0;
 				end
-
-				addi_01_T3: begin
-					#10 c_select <= 1; Y_enable <= 1;
-					#75 c_select <= 0; Y_enable <= 0;
+				
+				branch_T3: begin
+					#10 Gra <= 1; r_select <= 1; con_enable <= 1;
+			        #75 Gra <= 0; r_select <= 0; con_enable <= 0;
+				end
+				
+				branch_T4: begin
+					#10 PC_select <= 1; Y_enable <= 1;
+					#75 PC_select <= 0; Y_enable <= 0;
+				end
+				
+				branch_T5: begin
+					#10 c_select <= 1; alu_instruction <= 5'b00011; Z_enable <= 1;
+			        #75 c_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 
-				addi_01_T4: begin
-					#10 Grb <= 1; r_select <= 1; alu_instruction <= 5'b00011; Z_enable <= 1;
-					#75 Grb <= 0; r_select <= 0; alu_instruction <= 0; Z_enable <= 0;
-				end
-
-				addi_01_T5: begin
-					#10 Z_LO_select <= 1; Gra <= 1; r_enable <= 1;
-					#75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
+				branch_T6: begin
+					#10 Z_LO_select <= 1; PC_enable <= con_out;
+			        #75 Z_LO_select <= 0; PC_enable <= 0;
 				end
 
 			endcase

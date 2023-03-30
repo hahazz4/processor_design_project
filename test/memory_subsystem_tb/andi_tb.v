@@ -1,6 +1,6 @@
 `timescale 1ns/10ps
 
-module addi_tb;
+module andi_tb;
 	// CPU signals
 	reg clk;
 	
@@ -79,7 +79,7 @@ module addi_tb;
 	
 	// Time Signals and Load Registers
 	parameter Default = 0, loadi_01_T0 = 1, loadi_01_T1 = 2, loadi_01_T2 = 3, loadi_01_T3 = 4, loadi_01_T4 = 5, 
-	loadi_01_T5 = 6, addi_01_T0 = 7, addi_01_T1 = 8, addi_01_T2 = 9, addi_01_T3 = 10, addi_01_T4 = 11, addi_01_T5 = 12;
+	loadi_01_T5 = 6, andi_01_T0 = 7, andi_01_T1 = 8, andi_01_T2 = 9, andi_01_T3 = 10, andi_01_T4 = 11, andi_01_T5 = 12;
  
 	reg [4:0] Present_state = Default;
 
@@ -96,12 +96,12 @@ module addi_tb;
 				loadi_01_T3 : #100 Present_state = loadi_01_T4;
 				loadi_01_T4 : #100 Present_state = loadi_01_T5;
 
-				loadi_01_T5 : #100 Present_state = addi_01_T0;
-				addi_01_T0 : #100 Present_state = addi_01_T1;
-				addi_01_T1 : #100 Present_state = addi_01_T2;
-				addi_01_T2 : #100 Present_state = addi_01_T3;
-				addi_01_T3 : #100 Present_state = addi_01_T4;
-				addi_01_T4 : #100 Present_state = addi_01_T5;
+				loadi_01_T5 : #100 Present_state = andi_01_T0;
+				andi_01_T0 : #100 Present_state = andi_01_T1;
+				andi_01_T1 : #100 Present_state = andi_01_T2;
+				andi_01_T2 : #100 Present_state = andi_01_T3;
+				andi_01_T3 : #100 Present_state = andi_01_T4;
+				andi_01_T4 : #100 Present_state = andi_01_T5;
 
 			endcase
 		end
@@ -161,33 +161,33 @@ module addi_tb;
 			        #75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
 				end
 
-				// Add Immediate Instruction
-				addi_01_T0: begin // see if you need to de-assert these signals
+				// Andi Immediate Instruction
+				andi_01_T0: begin // see if you need to de-assert these signals
 					#10 PC_select <= 1; MAR_enable <= 1; 
 			        #75 PC_select <= 0; MAR_enable <= 0; 
 				end
 				
-				addi_01_T1: begin
+				andi_01_T1: begin
 					#10 PC_increment_enable <= 1; read <= 1; MDR_enable <= 1;
 			        #75 PC_increment_enable <= 0; read <= 0; MDR_enable <= 0;
 				end
 				
-				addi_01_T2: begin
+				andi_01_T2: begin
 					#10 MDR_select <= 1; IR_enable <= 1;
 					#75 MDR_select <= 0; IR_enable <= 0;
 				end
 
-				addi_01_T3: begin
+				andi_01_T3: begin
 					#10 c_select <= 1; Y_enable <= 1;
 					#75 c_select <= 0; Y_enable <= 0;
 				end
 
-				addi_01_T4: begin
-					#10 Grb <= 1; r_select <= 1; alu_instruction <= 5'b00011; Z_enable <= 1;
+				andi_01_T4: begin
+					#10 Grb <= 1; r_select <= 1; alu_instruction <= 5'b01101; Z_enable <= 1;
 					#75 Grb <= 0; r_select <= 0; alu_instruction <= 0; Z_enable <= 0;
 				end
 
-				addi_01_T5: begin
+				andi_01_T5: begin
 					#10 Z_LO_select <= 1; Gra <= 1; r_enable <= 1;
 					#75 Z_LO_select <= 0; Gra <= 0; r_enable <= 0;
 				end

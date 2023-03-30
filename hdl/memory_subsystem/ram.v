@@ -17,7 +17,13 @@ initial begin
     // $readmemh("load.mif", mem);
     // $readmemh("loadi.mif", mem);
     // $readmemh("store.mif", mem);
-    $readmemh("addi.mif", mem);
+    // $readmemh("addi.mif", mem);
+    // $readmemh("andi.mif", mem);
+    // $readmemh("ori.mif", mem);
+    // $readmemh("brzr.mif", mem);
+    // $readmemh("brnz.mif", mem);
+    // $readmemh("brpl.mif", mem);
+    // $readmemh("brmi.mif", mem);
 end
 
 always @(posedge clk) begin
