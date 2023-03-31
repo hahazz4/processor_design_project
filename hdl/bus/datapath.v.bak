@@ -3,7 +3,7 @@ module datapath(
 	// CPU signals
 	input wire clk, clr,
 	input wire [31:0] input_Data,
-	output wire [31:0] outport_Data
+	output wire [31:0] outport_Data,
 	);
 
 	/* Enable Signals */
@@ -163,8 +163,8 @@ module datapath(
 	inport inportInstance(.clk(clk), .clr(clr), .input_Data(input_Data), .inport_Data(inport_Data));
 	outport outportInstance(.clk(clk), .clr(clr), .enable(outport_enable), .bus_Data(bus_Data), .outport_Data(outport_Data));
 
-	control_unit cuInstance(
-		clk, reset, con_output, IR_Data, alu_instruction, read, write, Gra, Grb, Grc, r_enable, r_select, ba_select,
+	control_unit(
+		clk, reset, CON_FF, IR_Data, alu_instruction, read, write, Gra, Grb, Grc, r_enable, r_select, ba_select,
 		PC_enable, PC_increment_enable, IR_enable, con_enable, Y_enable, Z_enable, HI_enable, LO_enable,
 		MAR_enable, MDR_enable, outport_enable, manual_R15_enable,
 		MDR_select, Z_HI_select, Z_LO_select, HI_select, LO_select, PC_select, inport_select, c_select);
