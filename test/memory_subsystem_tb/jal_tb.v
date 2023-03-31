@@ -37,7 +37,7 @@ module jal_tb;
 	
     wire con_output;
 
-	wire [31:0] R2_Data;
+	wire [31:0] R2_Data, R15_Data;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -75,7 +75,7 @@ module jal_tb;
 	.bus_Data(bus_Data), // Data currently in the bus
 	// .aluResult(aluResult),
 	
-	.R2_Data(R2_Data), .con_output(con_output),
+	.R2_Data(R2_Data), .R15_Data(R15_Data), .con_output(con_output),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
 	.Y_Data(Y_Data),
@@ -132,8 +132,6 @@ module jal_tb;
 					
 					// Register Contents
 					alu_instruction <= 0;
-
-					con_output <= 0;
 				end
 				
 				loadi_T0: begin // see if you need to de-assert these signals

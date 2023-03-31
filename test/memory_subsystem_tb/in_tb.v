@@ -53,7 +53,7 @@ module in_tb;
 	.PC_enable(PC_enable), .PC_increment_enable(PC_increment_enable), .IR_enable(IR_enable), 
 	.Y_enable(Y_enable), .Z_enable(Z_enable), .con_enable(con_enable),
 	.MAR_enable(MAR_enable), .MDR_enable(MDR_enable), .r_enable(r_enable),
-	.manual_R15_enable(manual_R15_enable), .HI_enable(HI_enable), .outport_enable(outport_enable)
+	.manual_R15_enable(manual_R15_enable), .outport_enable(outport_enable),
 
 	// Memory Data Multiplexer Read/Select Signal
 	.read(read), .write(write),
@@ -96,7 +96,7 @@ module in_tb;
 	always @(posedge clk) // finite state machine; if clk rising-edge
 		begin
 			case (Present_state)
-				loadi_T5 : #100 Present_state = in_T0;
+				Default : #100 Present_state = in_T0;
 				in_T0 : #100 Present_state = in_T1;
 				in_T1 : #100 Present_state = in_T2;
 				in_T2 : #100 Present_state = in_T3;
@@ -113,7 +113,7 @@ module in_tb;
 					Y_enable <= 0; Z_enable <= 0;
 					PC_enable <= 0; PC_increment_enable <= 0;
 					r_enable <= 0; con_enable <= 0; manual_R15_enable <= 0;
-					HI_enable <= 0; outport_enable <= 0;
+					outport_enable <= 0;
 
 					// Select Signals
 					PC_select <= 0;
@@ -127,8 +127,6 @@ module in_tb;
 					
 					// Register Contents
 					alu_instruction <= 0;
-
-					con_output <= 0;
 				end
 
 				// in Instruction

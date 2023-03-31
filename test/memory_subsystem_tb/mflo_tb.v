@@ -11,6 +11,7 @@ module mflo_tb;
 	reg r_enable;
 	reg con_enable;
 	reg manual_R15_enable;
+	reg LO_enable;
 
 	// Memory Data Multiplexer Read/Select Signal
 	reg read, write;
@@ -24,6 +25,7 @@ module mflo_tb;
 	reg MDR_select;
 	reg c_select;
 	reg r_select;
+	reg LO_select;
 	
 	wire [4:0] bus_select;
 	wire [15:0] register_select;
@@ -37,7 +39,7 @@ module mflo_tb;
 	
     wire con_output;
 
-	wire [31:0] R6_Data;
+	wire [31:0] R6_Data, LO_Data;
 
 	wire [31:0] PC_Data, IR_Data;
 	wire [31:0] Y_Data;
@@ -65,6 +67,7 @@ module mflo_tb;
 	.MDR_select(MDR_select),
 	.c_select(c_select),
 	.r_select(r_select),
+	.LO_select(LO_select),
 
 	.bus_select(bus_select), .register_select(register_select),
 	
@@ -78,7 +81,7 @@ module mflo_tb;
 	.R6_Data(R6_Data), .con_output(con_output),
 
 	.PC_Data(PC_Data), .IR_Data(IR_Data),
-	.Y_Data(Y_Data),
+	.Y_Data(Y_Data), .LO_Data(LO_Data),
 	.Z_HI_Data(Z_HI_Data), .Z_LO_Data(Z_LO_Data),
 	.MAR_Data(MAR_Data), .MDR_Data(MDR_Data), .MDataIN(MDataIN));
 	
@@ -126,15 +129,13 @@ module mflo_tb;
 					MDR_select <= 0;
 					Z_LO_select <= 0; read <= 0;
 					write <= 0; c_select <= 0;
-					r_select <= 0;
+					r_select <= 0; LO_select <= 0;
 
 					// Select and Encode Signals
 					Gra <= 0; Grb <= 0; BAout <= 0;	
 					
 					// Register Contents
 					alu_instruction <= 0;
-
-					con_output <= 0;
 				end
 				
 				loadi_T0: begin // see if you need to de-assert these signals

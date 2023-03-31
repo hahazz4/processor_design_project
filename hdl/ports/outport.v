@@ -12,6 +12,6 @@ begin
     else if (enable) tempData <= bus_Data;
 end
 
-assign outPort = tempData[31:0];
+assign outport_Data = tempData[31:0];
 
 endmodule

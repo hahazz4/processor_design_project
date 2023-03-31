@@ -42,12 +42,13 @@ module datapath(
 	output wire con_output,
 	
 	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
-	output wire [31:0] R4_Data, R5_Data, R6_Data,
+	output wire [31:0] R4_Data, R5_Data, R6_Data, R15_Data,
 	output wire [31:0] debug_port_01, debug_port_02, 
 	output wire [31:0] outport_Data,
 
 	output wire [31:0] PC_Data, IR_Data,
 	output wire [31:0] Y_Data,
+	output wire [31:0] HI_Data, LO_Data,
 	output wire [31:0] Z_HI_Data, Z_LO_Data,
 	output wire [8:0] MAR_Data,
 	output wire [31:0] MDR_Data, MDataIN);
@@ -65,18 +66,18 @@ module datapath(
 	
 	// wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data, R4_Data, R5_Data, R6_Data, 
 	wire [31:0] R7_Data, R8_Data, R9_Data, R10_Data, 
-	R11_Data, R12_Data, R13_Data, R14_Data, R15_Data;
+	R11_Data, R12_Data, R13_Data, R14_Data;
 
 	// wire [31:0] PC_Data, IR_Data,
 	// wire [31:0] Y_Data,
 	// wire [31:0] Z_HI_Data, Z_LO_Data,
 	// wire [8:0] MAR_Data,
 	// wire [31:0] MDR_Data, MDataIN,
-	wire [31:0] HI_Data, LO_Data;
+	
 	wire [31:0] input_Data, inport_Data;
 	wire [31:0] C_sign_ext_Data;
 
-	assign input_Data = 32'd9
+	assign input_Data = 32'd9;
 	assign R15_enable = manual_R15_enable | register_enable[15];
 
 	/* Bus Components */

@@ -133,8 +133,6 @@ module branch_tb;
 					
 					// Register Contents
 					alu_instruction <= 0;
-
-					con_output <= 0;
 				end
 				
 				loadi_T0: begin // see if you need to de-assert these signals
@@ -199,7 +197,7 @@ module branch_tb;
 				end
 
 				branch_T6: begin
-					#10 Z_LO_select <= 1; PC_enable <= con_out;
+					#10 Z_LO_select <= 1; PC_enable <= con_output;
 			        #75 Z_LO_select <= 0; PC_enable <= 0;
 				end
 

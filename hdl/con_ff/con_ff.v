@@ -12,29 +12,42 @@ module con_ff(
     // Q Output Signal from the CON Flip Flop
     output con_output);                                                
 
-    // Branch Conditions
-    wire equal, notEqual, positive, negative;
-    
-    // Flip Flop D Input
-    wire branchFlag;
-	 
-	// Flip Flop Reset Signal
-	wire FFreset;
+    reg [3:0] decoder_out;
+    reg FF_Output;
+    assign con_output = FF_Output;
 
-    // 2-to-4 Decoder Output
-    wire [3:0] decoder_out;
-    
-    // Branch Condition Logic
-    assign equal = (bus_Data == 32'd0) ? 1'b1 : 1'b0;
-    assign notEqual = (bus_Data != 32'd0) ? 1'b1 : 1'b0;
-    assign positive = (bus_Data[31] == 0) ? 1'b1 : 1'b0;
-    assign negative = (bus_Data[31] == 1) ? 1'b1 : 1'b0;
-    
-    // 2-to-4 CON FF Decoder
-    con_decoder conDecoder(.decoder_input(instruction[20:19]), .decoder_output(decoder_out));
+    always @ (instruction[20:19]) begin
+        case (instruction[20:19])
+            2'b00: begin
+                decoder_out = 4'b0001;
+            end
+            
+            2'b01: begin
+                decoder_out = 4'b0010;
+            end
+            
+            2'b10: begin
+                decoder_out = 4'b0100;
+            end
 
-    // Branch Flag and Flip Flip
-    assign branchFlag = ((decoder_out[0] & equal) | (decoder_out[1] & notEqual) | (decoder_out[2] & positive) | (decoder_out[3] & negative));                                             //Assigning the value of con_D to the output wire con_out.
-    flip_flop flipFlopInstance(.clk(con_enable), .reset(FFreset), .D(branchFlag), .Q(con_output));
+            2'b11: begin
+                decoder_out = 4'b1000;
+            end
+        endcase
+    end
+
+always @ (bus_Data && con_enable) begin
+	if (bus_Data == 0 && decoder_out[0]) begin
+		FF_Output = 1;
+	end else if (bus_Data != 0 && decoder_out[1]) begin
+		FF_Output = 1;
+	end else if (bus_Data >= 0 && decoder_out[2]) begin
+		FF_Output = 1;
+	end else if (bus_Data[31] && decoder_out[3]) begin
+		FF_Output = 1;
+	end else begin
+		FF_Output = 0;
+	end
+end
 
 endmodule

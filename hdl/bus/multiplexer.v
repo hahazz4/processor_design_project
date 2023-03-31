@@ -10,7 +10,7 @@ input [31:0] muxIN_r10, input [31:0] muxIN_r11, input [31:0] muxIN_r12,
 input [31:0] muxIN_r13, input [31:0] muxIN_r14, input [31:0] muxIN_r15, 
 input [31:0] muxIN_HI, input [31:0] muxIN_LO, input [31:0] muxIN_Z_HI,
 input [31:0] muxIN_Z_LO, input [31:0] muxIN_PC, input [31:0] muxIN_MDR, 
-input [31:0] muxIN_InPort, input [31:0] muxIN_C_sign_ext, output reg [31:0] muxOut);
+input [31:0] muxIN_inport, input [31:0] muxIN_C_sign_ext, output reg [31:0] muxOut);
 
     /* While loop to check for updates in the select signals, which updates the mux output. */
     always @(*) begin
@@ -37,7 +37,7 @@ input [31:0] muxIN_InPort, input [31:0] muxIN_C_sign_ext, output reg [31:0] muxO
                 5'b10011: muxOut <= muxIN_Z_LO;
                 5'b10100: muxOut <= muxIN_PC;
                 5'b10101: muxOut <= muxIN_MDR;
-                5'b10110: muxOut <= muxIN_InPort;
+                5'b10110: muxOut <= muxIN_inport;
                 5'b10111: muxOut <= muxIN_C_sign_ext;
                 default: muxOut <= 32'd0;
             endcase

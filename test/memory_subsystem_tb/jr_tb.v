@@ -132,8 +132,6 @@ module jr_tb;
 					
 					// Register Contents
 					alu_instruction <= 0;
-
-					con_output <= 0;
 				end
 				
 				loadi_T0: begin // see if you need to de-assert these signals
