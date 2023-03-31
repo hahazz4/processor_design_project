@@ -3,7 +3,7 @@ module select_encode_logic(
     input [31:0] instruction,
     
     // Select and Encode Logic Control Signals
-    input Gra, Grb, Grc, r_enable, r_select, BAout,
+    input Gra, Grb, Grc, r_enable, r_select, ba_select,
 
     // Array of Enable and Select Output Signals
     output [15:0] register_enable, register_select,
@@ -50,7 +50,7 @@ module select_encode_logic(
 
     // Assigning Values to the Outputs
     assign register_enable = {16{r_enable}} & decoder_out;
-    assign register_select = ({16{BAout}} | {16{r_select}}) & decoder_out;
+    assign register_select = ({16{ba_select}} | {16{r_select}}) & decoder_out;
     assign C_sign_ext_Data = {{13{instruction[18]}}, instruction[18:0]};
 
 endmodule

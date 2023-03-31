@@ -14,7 +14,7 @@ module loadi_tb;
 	reg read;
 	
 	// Select and Encode Input Signals
-	reg Gra, Grb, BAout;
+	reg Gra, Grb, ba_select;
 
 	// Encoder Output Select Signals 
 	reg PC_select;
@@ -50,7 +50,7 @@ module loadi_tb;
 	.read(read),
 
 	// Select and Encode Input Signals
-	.Gra(Gra), .Grb(Grb), .BAout(BAout),
+	.Gra(Gra), .Grb(Grb), .ba_select(ba_select),
 
 	// Encoder Output Select Signals
 	.PC_select(PC_select),
@@ -122,7 +122,7 @@ module loadi_tb;
 					c_select <= 0;
 
 					// Select and Encode Signals
-					Gra <= 0; Grb <= 0; BAout <= 0;	
+					Gra <= 0; Grb <= 0; ba_select <= 0;	
 					
 					// Register Contents
 					alu_instruction <= 0;
@@ -144,8 +144,8 @@ module loadi_tb;
 				end
 				
 				loadi_01_T3, loadi_02_T3: begin
-					#10 Grb <= 1; BAout <= 1; Y_enable <= 1;
-			        #75 Grb <= 0; BAout <= 0; Y_enable <= 0;
+					#10 Grb <= 1; ba_select <= 1; Y_enable <= 1;
+			        #75 Grb <= 0; ba_select <= 0; Y_enable <= 0;
 				end
 				
 				loadi_01_T4, loadi_02_T4: begin

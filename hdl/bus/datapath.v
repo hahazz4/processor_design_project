@@ -1,84 +1,103 @@
 /* Representation of the datapath in Verilog HDL. */
-/* Connected outputs of encoder to select signals in multiplexer. */
 module datapath(
 	// CPU signals
-	input wire clk, 
-	input wire clr, 
-	
-	// Register write/enable signals
-	input wire PC_enable, PC_increment_enable, IR_enable,
-	input wire con_enable,
-	input wire Y_enable, Z_enable, 
-	input wire MAR_enable, MDR_enable, 
-	input wire HI_enable, LO_enable,
-	input wire manual_R15_enable,
-	input wire outport_enable,
-
-	// Memory Data Multiplexer Read/Select Signal
-	input wire read, write,
-
-	// Select and Encode Logic Inputs
-	input wire Gra, Grb, Grc, r_enable, r_select, BAout,
-
-	// Encoder Output Select Signals
-	input wire PC_select,
-	input wire HI_select, LO_select, 
-	input wire Z_HI_select, Z_LO_select, 
-	input wire MDR_select,
-	input wire inport_select,
-	input wire c_select,
-
-	output wire [4:0] bus_select,
-	output wire [15:0] register_select,
-	
-	// ALU Opcode
-	input wire [4:0] alu_instruction,
-
-	// Output Data Signals
-	output wire [31:0] bus_Data, // Data currently in the bus
-	// output wire [63:0] aluResult,
-
-	// CON FF Module
-	output wire con_output,
-	
-	output wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data,
-	output wire [31:0] R4_Data, R5_Data, R6_Data, R15_Data,
-	output wire [31:0] debug_port_01, debug_port_02, 
+	input wire clk, clr,
+	input wire [31:0] input_Data,
 	output wire [31:0] outport_Data,
+	);
 
-	output wire [31:0] PC_Data, IR_Data,
-	output wire [31:0] Y_Data,
-	output wire [31:0] HI_Data, LO_Data,
-	output wire [31:0] Z_HI_Data, Z_LO_Data,
-	output wire [8:0] MAR_Data,
-	output wire [31:0] MDR_Data, MDataIN);
-
-	// Enable Signals
-	wire [15:0] register_enable;
+	/* Enable Signals */
+	// General Register Enable Signals
 	wire R15_enable;
+	wire manual_R15_enable;
+	wire [15:0] register_enable;
+	
+	// Program Counter Enable Signals
+	wire PC_enable, PC_increment_enable;
+	
+	// Instruction Register Enable Signal
+	wire IR_enable;
 
-	// Select Signals
-	// wire [15:0] register_select;
+	// CON Flip Flop Enable Signal
+	wire con_enable;
 
-	// Data Signals
-	// wire [31:0] bus_Data, // Data currently in the bus
+	// ALU 'Y' Register Enable Signal
+	wire Y_enable; 
+	
+	// Z_HI and Z_LO Enable Signal
+	wire Z_enable;
+
+	// HI and LO Register Enable Signals
+	wire HI_enable, LO_enable;
+
+	// Memory Register Enable Signals
+	wire MAR_enable, MDR_enable, read, write;
+	
+	// Outport Register Enable Signal
+	wire outport_enable;
+
+	/* Select Signals */
+	// General Register Select Signals
+	wire [15:0] register_select;
+
+	// 32-to-5 Encoder Output
+	wire [4:0] bus_select;
+
+	// PC Register Select Signal
+	wire PC_select;
+
+	// HI/LO Register Select Signal
+	wire HI_select, LO_select;
+
+	// Z_HI/Z_LO Register Select Signal
+	wire Z_HI_select, Z_LO_select;
+
+	// MDR Select Signal
+	wire MDR_select;
+
+	// Inport Select Signal
+	wire inport_select;
+
+	// C_Sign_Extended Select Signal
+	wire c_select;
+
+	/* Data Signals */
+	wire [31:0] bus_Data; // Data currently in the bus
+	
 	wire [63:0] aluResult;
+	wire [4:0] alu_instruction; // ALU Opcode
 	
-	// wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data, R4_Data, R5_Data, R6_Data, 
-	wire [31:0] R7_Data, R8_Data, R9_Data, R10_Data, 
-	R11_Data, R12_Data, R13_Data, R14_Data;
+	// General Register Contents 
+	wire [31:0] R0_Data, R1_Data, R2_Data, R3_Data, R4_Data, R5_Data, R6_Data, R7_Data, 
+	R8_Data, R9_Data, R10_Data, R11_Data, R12_Data, R13_Data, R14_Data, R15_Data;
 
-	// wire [31:0] PC_Data, IR_Data,
-	// wire [31:0] Y_Data,
-	// wire [31:0] Z_HI_Data, Z_LO_Data,
-	// wire [8:0] MAR_Data,
-	// wire [31:0] MDR_Data, MDataIN,
+	// Instruction Register and Program Counter Contents
+	wire [31:0] PC_Data, IR_Data;
 	
-	wire [31:0] input_Data, inport_Data;
+	// ALU Input Register 'Y' Contents
+	wire [31:0] Y_Data;
+
+	// ALU Output Register Contents
+	wire [31:0] Z_HI_Data, Z_LO_Data;
+	wire [31:0] HI_Data, LO_Data;
+
+	// RAM Memory Address Register (MAR) Contents
+	wire [8:0] MAR_Data;
+
+	// RAM Memory Data Register (MDR) Contents
+	wire [31:0] MDR_Data, MDataIN;
+	
+	// C Sign Extended Data
 	wire [31:0] C_sign_ext_Data;
 
-	assign input_Data = 32'd9;
-	assign R15_enable = manual_R15_enable | register_enable[15];
+	// Port Register Contents
+	wire [31:0] inport_Data;
+
+	/* Select and Encode Signals */
+	wire Gra, Grb, Grc, r_enable, r_select, ba_select;
+
+	/* CON FF Output */
+	wire con_output;
 
 	/* Bus Components */
 	// 32-to-5 Encoder
@@ -96,7 +115,7 @@ module datapath(
     .muxIN_MDR(MDR_Data), .muxIN_inport(inport_Data), .muxIN_C_sign_ext(C_sign_ext_Data), .muxOut(bus_Data));
 
 	// General purpose registers r0 -> r15
-	R0_revised r0 (.clk(clk), .clr(clr), .enable(register_enable[0]), .BAout(BAout), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
+	R0_revised r0 (.clk(clk), .clr(clr), .enable(register_enable[0]), .ba_select(ba_select), .bus_Data(bus_Data), .R0_Data(R0_Data)); 
 	register r1 (.clk(clk), .clr(clr), .enable(register_enable[1]), .D(bus_Data), .Q(R1_Data)); 
 	register r2 (.clk(clk), .clr(clr), .enable(register_enable[2]), .D(bus_Data), .Q(R2_Data));
 	register r3 (.clk(clk), .clr(clr), .enable(register_enable[3]), .D(bus_Data), .Q(R3_Data));
@@ -111,6 +130,8 @@ module datapath(
 	register r12 (.clk(clk), .clr(clr), .enable(register_enable[12]), .D(bus_Data), .Q(R12_Data));
 	register r13 (.clk(clk), .clr(clr), .enable(register_enable[13]), .D(bus_Data), .Q(R13_Data));
 	register r14 (.clk(clk), .clr(clr), .enable(register_enable[14]), .D(bus_Data), .Q(R14_Data));
+
+	assign R15_enable = manual_R15_enable | register_enable[15];
 	register r15 (.clk(clk), .clr(clr), .enable(R15_enable), .D(bus_Data), .Q(R15_Data));
 
 	// ALU Output Registers
@@ -135,11 +156,17 @@ module datapath(
 	ram ramInstance(.debug_port_01(debug_port_01), .debug_port_02(debug_port_02), .clk(clk), .read(read), .write(write), .data_in(MDR_Data), .address_in(MAR_Data), .data_out(MDataIN));
 
 	select_encode_logic selInstance(.instruction(IR_Data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .r_enable(r_enable), .r_select(r_select), 
-	.BAout(BAout), .C_sign_ext_Data(C_sign_ext_Data), .register_enable(register_enable), .register_select(register_select));
+	.ba_select(ba_select), .C_sign_ext_Data(C_sign_ext_Data), .register_enable(register_enable), .register_select(register_select));
 
 	con_ff conInstance(.bus_Data(bus_Data), .instruction(IR_Data), .con_enable(con_enable), .con_output(con_output));
 	
 	inport inportInstance(.clk(clk), .clr(clr), .input_Data(input_Data), .inport_Data(inport_Data));
 	outport outportInstance(.clk(clk), .clr(clr), .enable(outport_enable), .bus_Data(bus_Data), .outport_Data(outport_Data));
+
+	control_unit(
+		clk, reset, CON_FF, IR_Data, alu_instruction, read, write, Gra, Grb, Grc, r_enable, r_select, ba_select,
+		PC_enable, PC_increment_enable, IR_enable, con_enable, Y_enable, Z_enable, HI_enable, LO_enable,
+		MAR_enable, MDR_enable, outport_enable, manual_R15_enable,
+		MDR_select, Z_HI_select, Z_LO_select, HI_select, LO_select, PC_select, inport_select, c_select);
 
 endmodule // Datapath end.

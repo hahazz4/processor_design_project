@@ -17,7 +17,7 @@ module in_tb;
 	reg read, write;
 	
 	// Select and Encode Input Signals
-	reg Gra, Grb, BAout;
+	reg Gra, Grb, ba_select;
 
 	// Encoder Output Select Signals
 	reg PC_select;
@@ -59,7 +59,7 @@ module in_tb;
 	.read(read), .write(write),
 
 	// Select and Encode Input Signals
-	.Gra(Gra), .Grb(Grb), .BAout(BAout),
+	.Gra(Gra), .Grb(Grb), .ba_select(ba_select),
 
 	// Encoder Output Select Signals
 	.PC_select(PC_select),
@@ -123,7 +123,7 @@ module in_tb;
 					r_select <= 0; inport_select <= 0;
 
 					// Select and Encode Signals
-					Gra <= 0; Grb <= 0; BAout <= 0;	
+					Gra <= 0; Grb <= 0; ba_select <= 0;	
 					
 					// Register Contents
 					alu_instruction <= 0;

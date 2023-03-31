@@ -70,7 +70,7 @@ module alu (
    always @(*) begin
       case(opcode)
          // Add Operation
-         load, loadImm, store, add, addImm : begin
+         add : begin
             result[31:0] <= sum_result[31:0];
             result[63:32] <= 32'd0;
 			end

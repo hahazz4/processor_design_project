@@ -14,22 +14,7 @@ reg [31:0] mem [511:0]; // Memory array
 reg [31:0] tempData;    // Temporary data storage
 
 initial begin 
-    // $readmemh("load.mif", mem);
-    // $readmemh("loadi.mif", mem);
-    // $readmemh("store.mif", mem);
-    // $readmemh("addi.mif", mem);
-    // $readmemh("andi.mif", mem);
-    // $readmemh("ori.mif", mem);
-    // $readmemh("brzr.mif", mem);
-    // $readmemh("brnz.mif", mem);
-    // $readmemh("brpl.mif", mem);
-    // $readmemh("brmi.mif", mem);
-    // $readmemh("jr.mif", mem);
-    // $readmemh("jal.mif", mem);
-    // $readmemh("mfhi.mif", mem);
-    // $readmemh("mflo.mif", mem);
-    // $readmemh("inport.mif", mem);
-    // $readmemh("outport.mif", mem);
+    $readmemh("ram.mif", mem);
 end
 
 always @(posedge clk) begin
